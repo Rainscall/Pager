@@ -7,7 +7,6 @@ const searchEngine = {
     "sogou": "https://www.sogou.com/web?query="
 };
 
-console.log(Object.keys(searchEngine));
 const selectSearchEngine = document.getElementById('selectSearchEngine');
 
 for (var i = 0; i < Object.keys(searchEngine).length; i++) {
@@ -23,7 +22,7 @@ if (lastTimeUsedEngine) {
 
 function search() {
     selectedEngine = selectSearchEngine.value;
-    localStorage.setItem('lastTimeUsedEngine',selectedEngine);
+    localStorage.setItem('lastTimeUsedEngine', selectedEngine);
     if (!searchInput.value) {
         return;
     }
@@ -91,4 +90,35 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 
     base.appendChild(child);
     document.body.prepend(base);
+}
+
+(() => {
+    const searchInputArea = document.getElementById('searchInputArea');
+    searchInputArea.addEventListener('click', (e) => {
+        var target = e.target;
+        //判断点击的是父元素而不是下面的子元素
+        if (!(searchInputArea.contains(target) && target != searchInputArea)) {
+            focusToID('searchInput');
+        }
+    })
+})();
+
+(() => {
+    document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey) {
+            if (event.key === 's' || event.key === 'S') {
+                event.preventDefault();
+                createWarningWindow('Working on progress...', 'This page is developing.', 'close', '#777', '#FFF', true);
+            }
+        }
+    });
+})();
+
+function focusToID(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.focus();
+    } else {
+        console.error("Element with ID '" + elementId + "' not found.");
+    }
 }

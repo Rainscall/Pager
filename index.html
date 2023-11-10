@@ -14,13 +14,14 @@
         <div class="childPart" style="text-align: center;">
             <h1>Pager</h1>
         </div>
-        <div class="childPart greyBackground searchInput">
+        <div class="childPart greyBackground searchInput" id="searchInputArea">
             <div class="searchEngine">
                 <select id="selectSearchEngine">
                 </select>
             </div>
             <form action="javascript:search();">
-                <input autocomplete="off" placeholder="search something..." type="text" name="searchInput" id="searchInput">
+                <input autocomplete="off" placeholder="search something..." type="text" name="searchInput"
+                    id="searchInput">
             </form>
             <div class="searchbuttom" onclick="search();">go</div>
         </div>

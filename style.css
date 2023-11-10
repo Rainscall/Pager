@@ -142,6 +142,7 @@ h1 {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    cursor: text;
 }
 
 #searchInput {
@@ -187,6 +188,7 @@ h1 {
     user-select: none;
     width: fit-content;
     font-weight: bolder;
+    cursor: pointer;
 }
 
 #selectSearchEngine option {
