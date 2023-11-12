@@ -288,3 +288,52 @@ function focusToID(elementId) {
         console.error("Element with ID '" + elementId + "' not found.");
     }
 }
+
+(() => {
+    const clock = document.getElementById('clock');
+    clock.addEventListener('click', () => {
+        enableClock()
+    });
+
+    function enableClock() {
+        let clockEnabled = localStorage.getItem('clockEnabled');
+        if (!clockEnabled || clockEnabled == 'false') {
+            localStorage.setItem('clockEnabled', true);
+            writeToClock();
+            clockCycle('start');
+        } else {
+            localStorage.setItem('clockEnabled', false);
+            clockCycle('remove');
+            const clock = document.getElementById('clock');
+            clock.innerText = 'Pager';
+        }
+    }
+
+    let ClockInterval;
+    function clockCycle(action) {
+        if (action == 'remove') {
+            clearInterval(ClockInterval);
+            return;
+        }
+        ClockInterval = setInterval(writeToClock, 1000);
+    }
+
+    function getRealTime() {
+        time = new Date();
+        hour = time.getHours()
+        minute = time.getMinutes()
+        return (hour + ':' + minute);
+    }
+
+    function writeToClock() {
+        const clock = document.getElementById('clock');
+        clock.innerText = getRealTime();
+    }
+
+    let clockEnabled = localStorage.getItem('clockEnabled');
+    if (clockEnabled == 'true') {
+        localStorage.setItem('clockEnabled', true);
+        writeToClock();
+        clockCycle('start');
+    }
+})();
