@@ -258,3 +258,25 @@ body {
     bottom: 0;
     margin-bottom: 16px;
 }
+
+.footer div {
+    cursor: pointer;
+}
+
+#clock {
+    cursor: pointer;
+    user-select: none;
+}
+
+.searchInputBase {
+    backdrop-filter: blur(0px);
+    transition: all ease-in-out 0.215s;
+}
+
+.searchInputBase:hover {
+    backdrop-filter: blur(10px);
+}
+
+.searchInputBase:has(#searchInput:valid) {
+    backdrop-filter: blur(10px);
+}
