@@ -6,26 +6,48 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=0">
     <title>Pager</title>
+    <link rel="preconnect" href="https://cdn.staticfile.org" />
+    <link rel="stylesheet" href="https://cdn.staticfile.org/toastify-js/1.12.0/toastify.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="basePart maxViewPort">
-        <div class="childPart" style="text-align: center;">
-            <h1>Pager</h1>
-        </div>
-        <div class="childPart greyBackground searchInput" id="searchInputArea">
-            <div class="searchEngine">
-                <select id="selectSearchEngine">
-                </select>
+    <noscript>Your need to enable JavaScript to use this service.</noscript>
+    <div class="basePart maxViewPort" style="background-color: #ffffff98;">
+        <div style="min-height: 50dvh;">
+            <div class="childPart" style="text-align: center;">
+                <h1>Pager</h1>
             </div>
-            <form action="javascript:search();">
-                <input autocomplete="off" placeholder="search something..." type="text" name="searchInput"
-                    id="searchInput">
-            </form>
-            <div class="searchbuttom" onclick="search();">go</div>
+            <div class="childPart greyBackground searchInput blurBackdrop" id="searchInputArea">
+                <div class="searchEngine">
+                    <select id="selectSearchEngine">
+                    </select>
+                </div>
+                <form action="javascript:search();">
+                    <input autocomplete="off" placeholder="search something..." type="text" name="searchInput"
+                        id="searchInput">
+                </form>
+                <div class="searchbuttom" onclick="search();">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                        width="216px" viewBox="-0.5 -0.5 216 227" class="searchIcon">
+                        <defs />
+                        <g>
+                            <ellipse cx="124.39" cy="90" rx="90" ry="90" fill="#6e6e6e" stroke="none"
+                                pointer-events="all" />
+                            <ellipse cx="124.39" cy="90" rx="55" ry="55" fill="#ffffff" stroke="none"
+                                pointer-events="all" />
+                            <rect x="0" y="155.85" width="100" height="40" fill="#6e6e6e" stroke="none"
+                                transform="rotate(-45,50,175.85)" pointer-events="all" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="childPart footer">
+            <div onclick="openSettingPage()">Settings</div>
         </div>
     </div>
+    <script src="https://cdn.staticfile.org/toastify-js/1.12.0/toastify.min.js"></script>
     <script src="main.js"></script>
 </body>
 

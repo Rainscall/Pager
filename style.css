@@ -197,3 +197,64 @@ h1 {
     border: none;
     outline: none;
 }
+
+.searchIcon {
+    cursor: pointer;
+    max-width: 100%;
+    max-height: 227px;
+    margin: 0;
+    padding: 0;
+    height: 1em;
+    position: relative;
+    bottom: 0;
+    display: block;
+}
+
+.blurBackdrop {
+    backdrop-filter: blur(10px);
+}
+
+body {
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.backgroundBar {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.backgroundBar div {
+    padding: 10px;
+    padding-bottom: 8px;
+    border-radius: 114514px;
+    margin: 0;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.resetBackground {
+    background-color: #840D23;
+    color: #fff;
+    width: 3em;
+    backdrop-filter: blur(8px);
+}
+
+.setBackground {
+    background-color: #ffffff8a;
+    width: calc(100% - 6em);
+}
+
+.footer {
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 16px;
+}
