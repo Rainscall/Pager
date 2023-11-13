@@ -174,6 +174,8 @@ function openSettingPage() {
     let closeButtom = document.createElement('div');
     let backgroundBar = document.createElement('div');
     let setBackground = document.createElement('div');
+    let setBackgroundFromBing = document.createElement('div');
+    let setBackgroundFromBingBar = document.createElement('div');
     let resetBackground = document.createElement('div');
     let fileInput = document.createElement('input')
     const baseID = 'settingPage-' + randomString(8);
@@ -196,6 +198,7 @@ function openSettingPage() {
     fileInput.style.display = 'none';
 
     backgroundBar.className = 'backgroundBar';
+    setBackgroundFromBingBar.className = 'backgroundBar';
 
     resetBackground.innerText = 'reset';
     resetBackground.className = 'resetBackground';
@@ -208,9 +211,18 @@ function openSettingPage() {
     backgroundBar.appendChild(resetBackground);
     backgroundBar.appendChild(setBackground);
 
+    setBackgroundFromBing.innerText = 'Get background from bing';
+    setBackgroundFromBing.className = 'setBackground';
+    setBackgroundFromBing.style.width = '100%';
+    setBackgroundFromBing.setAttribute('onclick', 'setBingImage();');
+
+    setBackgroundFromBingBar.appendChild(setBackgroundFromBing);
+
     child.className = 'childPart';
     child.prepend(heading);
+    child.appendChild(document.createElement('hr'));
     child.appendChild(backgroundBar);
+    child.appendChild(setBackgroundFromBingBar);
 
     closeButtom.setAttribute("onclick", "closeOverlay(\"" + baseID + "\");hasSettingPage=false;");
     closeButtom.className = 'closeButtom';
@@ -221,6 +233,7 @@ function openSettingPage() {
     closeButtom.style.paddingLeft = '0';
     child.appendChild(fileInput);
 
+    child.appendChild(document.createElement('hr'));
     child.appendChild(closeButtom);
     base.appendChild(child);
     document.body.prepend(base);
@@ -320,8 +333,11 @@ function focusToID(elementId) {
 
     function getRealTime() {
         time = new Date();
-        hour = time.getHours()
-        minute = time.getMinutes()
+        hour = String(time.getHours());
+        minute = String(time.getMinutes())
+        if (minute.length != 2) {
+            minute = '0' + minute;
+        }
         return (hour + ':' + minute);
     }
 
@@ -337,3 +353,21 @@ function focusToID(elementId) {
         clockCycle('start');
     }
 })();
+
+function setBingImage() {
+    fetch('https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN')
+        .then(response => response.json())
+        .then((response) => {
+            fetch(response.url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        const base64data = reader.result;
+                        localStorage.setItem('background.image', base64data);
+                        document.body.style.backgroundImage = 'url(\'' + base64data + '\')';
+                    }
+                })
+        })
+}

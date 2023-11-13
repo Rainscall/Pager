@@ -132,7 +132,7 @@ h1 {
 }
 
 .closeButtom:hover {
-    box-shadow: 0 0 10px 1px #fff;
+    box-shadow: 0 0 10px 1px #b9b9b9b0;
     transition: ease-in-out box-shadow 0.234s;
 }
 
@@ -279,4 +279,13 @@ body {
 
 .searchInputBase:has(#searchInput:valid) {
     backdrop-filter: blur(10px);
+}
+
+.warningWindow hr{
+    outline: none;
+    border: none;
+    background-color: #ffffff18;
+    height: 2px;
+    border-radius: 114514px;
+    margin: 12px 0;
 }
