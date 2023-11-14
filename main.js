@@ -163,7 +163,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
     });
 })();
 
-hasSettingPage = false;
+let hasSettingPage = false;
 function openSettingPage() {
     if (hasSettingPage) {
         return;
@@ -242,6 +242,8 @@ function openSettingPage() {
 
 function resetBackground() {
     localStorage.removeItem('background.image');
+    localStorage.removeItem('background.bing');
+    localStorage.removeItem('background.lastBing');
     document.body.style.backgroundImage = '';
     Toastify({
         text: "Background reset",
@@ -284,6 +286,8 @@ function changeBackground(fileInputId) {
         return;
     }
     localStorage.removeItem('background.image');
+    localStorage.removeItem('background.bing');
+    localStorage.removeItem('background.lastBing');
     reader.readAsDataURL(file);
     reader.onload = () => {
         const backgroundImage = reader.result;
@@ -358,6 +362,7 @@ function setBingImage() {
     fetch('https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN')
         .then(response => response.json())
         .then((response) => {
+            localStorage.setItem('background.lastBing', response.end_date);
             fetch(response.url)
                 .then(response => response.blob())
                 .then(blob => {
@@ -366,8 +371,35 @@ function setBingImage() {
                     reader.onloadend = () => {
                         const base64data = reader.result;
                         localStorage.setItem('background.image', base64data);
+                        localStorage.setItem('background.bing', true);
                         document.body.style.backgroundImage = 'url(\'' + base64data + '\')';
                     }
                 })
         })
+}
+
+function getCurrentTime() {
+    let currentDate = new Date();
+    function getStrMonth() {
+        let Month = String(Number(currentDate.getMonth()) + 1);
+        if (Month.length != 2) {
+            Month = '0' + Month;
+        }
+        return Month;
+    }
+    function getStrDate() {
+        let day = String(currentDate.getDate());
+        if (day.length != 2) {
+            day = '0' + day;
+        }
+        return day;
+    }
+    return currentDate.getFullYear() + getStrMonth() + getStrDate();
+}
+
+//启用必应图片后自动更新
+let usingBing = localStorage.getItem('background.bing') != null;
+let lastBing = localStorage.getItem('background.lastBing');
+if (usingBing === true && getCurrentTime() != lastBing) {
+    setBingImage();
 }
