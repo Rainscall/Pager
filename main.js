@@ -50,10 +50,10 @@ if (lastTimeUsedEngine) {
                     selectSearchEngine.value = 'bing';
                     Toastify({
                         text: "In China, Bing is a better choice.",
-                        duration: 5500,
+                        duration: 2500,
                         className: "info",
                         position: "center",
-                        gravity: "bottom",
+                        gravity: "top",
                         style: {
                             color: "#FFF",
                             background: "#414141",
@@ -254,7 +254,7 @@ function resetBackground() {
         duration: 2000,
         className: "info",
         position: "center",
-        gravity: "bottom",
+        gravity: "top",
         style: {
             background: "#414141",
             borderRadius: "8px",
@@ -364,26 +364,55 @@ function focusToID(elementId) {
     }
 })();
 
-function setBingImage() {
-    fetch('https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN')
-        .then(response => response.json())
-        .then((response) => {
-            localStorage.setItem('background.lastBing', response.end_date);
-            fetch(response.url)
-                .then(response => response.blob())
-                .then(blob => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onloadend = () => {
-                        const base64data = reader.result;
-                        localStorage.setItem('background.image', base64data);
-                        localStorage.setItem('background.bing', true);
-                        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
-                        document.body.style.backgroundImage = 'url(\'' + base64data + '\')';
-                        clock.style.color = "#FFF";
-                    }
-                })
-        })
+async function setBingImage() {
+    try {
+        Toastify({
+            text: "Loading...",
+            duration: 2500,
+            className: "info",
+            position: "center",
+            gravity: "top",
+            style: {
+                color: "#FFF",
+                background: "#414141",
+                borderRadius: "8px",
+                boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+            }
+        }).showToast();
+        const bingResponse = await fetch('https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN');
+        const bingData = await bingResponse.json();
+        localStorage.setItem('background.lastBing', bingData.end_date);
+
+        const imageResponse = await fetch(bingData.url);
+        const blob = await imageResponse.blob();
+
+        const base64data = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => resolve(reader.result);
+        });
+
+        localStorage.setItem('background.image', base64data);
+        localStorage.setItem('background.bing', true);
+        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
+        document.body.style.backgroundImage = `url('${base64data}')`;
+        clock.style.color = "#FFF";
+    } catch (error) {
+        Toastify({
+            text: 'Error fetching or processing data:\n' + error,
+            duration: 2500,
+            className: "info",
+            position: "center",
+            gravity: "top",
+            style: {
+                color: "#FFF",
+                background: "#840D23",
+                borderRadius: "8px",
+                boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+            }
+        }).showToast();
+        console.error('Error fetching or processing data:', error);
+    }
 }
 
 function getCurrentTime() {
