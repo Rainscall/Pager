@@ -1,3 +1,4 @@
+const clock = document.getElementById('clock');
 const searchInput = document.getElementById('searchInput');
 const searchEngine = {
     "google": "https://www.google.com/search?q=",
@@ -13,7 +14,7 @@ const searchEngine = {
     "naver": "https://search.naver.com/search.naver?query=",
     "DDG": "https://duckduckgo.com/?t=h_&q="
 };
-
+const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
 
 for (var i = 0; i < Object.keys(searchEngine).length; i++) {
@@ -30,6 +31,8 @@ if (lastTimeUsedEngine) {
 (() => {
     const backgroundImage = localStorage.getItem('background.image');
     if (backgroundImage) {
+        clock.style.color = "#FFF";
+        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = 'url(\'' + backgroundImage + '\')';
     }
 })();
@@ -244,6 +247,7 @@ function resetBackground() {
     localStorage.removeItem('background.image');
     localStorage.removeItem('background.bing');
     localStorage.removeItem('background.lastBing');
+    clock.style.color = "#000";
     document.body.style.backgroundImage = '';
     Toastify({
         text: "Background reset",
@@ -292,6 +296,8 @@ function changeBackground(fileInputId) {
     reader.onload = () => {
         const backgroundImage = reader.result;
         document.body.style.backgroundImage = 'url(\'' + backgroundImage + '\')';
+        clock.style.color = "#FFF";
+        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         localStorage.setItem('background.image', backgroundImage);
     }
     fileInput.files = void 0;
@@ -372,7 +378,9 @@ function setBingImage() {
                         const base64data = reader.result;
                         localStorage.setItem('background.image', base64data);
                         localStorage.setItem('background.bing', true);
+                        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
                         document.body.style.backgroundImage = 'url(\'' + base64data + '\')';
+                        clock.style.color = "#FFF";
                     }
                 })
         })
