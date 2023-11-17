@@ -83,7 +83,8 @@ function search() {
 }
 
 function closeOverlay(elementID) {
-    document.getElementById(elementID).parentNode.removeChild(document.getElementById(elementID));
+    const element = document.getElementById(elementID);
+    element.parentNode.removeChild(element);
 }
 
 function randomString(e) {
@@ -161,6 +162,12 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
             if (event.key === 's' || event.key === 'S') {
                 event.preventDefault();
                 openSettingPage();
+            }
+        };
+        if (event.key === '/') {
+            if (searchInput != document.activeElement) {
+                event.preventDefault();
+                focusToID('searchInput');
             }
         }
     });
