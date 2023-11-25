@@ -313,6 +313,10 @@ body {
     backdrop-filter: blur(4px);
 }
 
+#basePart:has(#searchInput:focus) {
+    backdrop-filter: blur(4px);
+}
+
 .warningWindow hr {
     outline: none;
     border: none;
