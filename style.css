@@ -247,6 +247,7 @@ body {
     backdrop-filter: blur(8px);
 }
 
+.enableHistory,
 .setBackground {
     background-color: #ffffff8a;
     width: calc(100% - 6em);
@@ -317,6 +318,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
+.historyArea>div hr,
 .warningWindow hr {
     outline: none;
     border: none;
@@ -324,4 +326,70 @@ body {
     height: 2px;
     border-radius: 114514px;
     margin: 12px 0;
+    width: 100%;
+}
+
+.historyArea>div hr {
+    margin-top: 2px;
+}
+
+.historyArea {
+    margin-top: 8px;
+    border-radius: 20px;
+    width: 100%;
+    height: fit-content;
+    transition: all ease-in-out 0.215s;
+}
+
+.historyArea>div {
+    display: flex;
+    margin: 8px;
+    height: 100%;
+    width: calc(100% - 8px - 8px);
+    flex-direction: column;
+    align-items: center;
+}
+
+.historyArea>div div {
+    padding: 4px 1em;
+    padding-bottom: 2px;
+    width: calc(100% - 2em);
+    border-radius: 114514px;
+    color: #393939;
+    margin: 4px 0;
+    background-color: #a7a7a76b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    transition: all ease-in-out 0.210s;
+    cursor: pointer;
+}
+
+.historyArea>div div:last-child {
+    margin-bottom: 8px;
+}
+
+.historyArea>div div:first-child {
+    margin-top: 8px;
+}
+
+.historyArea>div div:hover {
+    background-color: #a7a7a7a0;
+}
+
+.historyArea>div div span {
+    font-size: smaller;
+    font-weight: lighter;
+    display: block;
+}
+
+.historyArea h2 {
+    color: #494949;
+    display: block;
+    margin-top: 0.65em;
+    text-align: left;
+    width: 100%;
+    margin-left: 1em;
 }

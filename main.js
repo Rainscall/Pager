@@ -70,6 +70,10 @@ if (lastTimeUsedEngine) {
 function search() {
     selectedEngine = selectSearchEngine.value;
     localStorage.setItem('lastTimeUsedEngine', selectedEngine);
+    let history = JSON.parse(localStorage.getItem('history'));
+    if (!history) {
+        history = {};
+    }
     if (!searchInput.value) {
         return;
     }
@@ -77,6 +81,14 @@ function search() {
         window.open(searchInput.value);
         searchInput.value = '';
     } else {
+        let newHistory = searchInput.value.substring(0, 20);
+        if (newHistory.length == 20) {
+            newHistory += '...';
+        }
+        newHistory = getCurrentTimestamp() + '.' + newHistory;
+        history[newHistory] = String(searchInput.value);
+        localStorage.setItem('history', JSON.stringify(history));
+
         window.open(searchEngine[selectedEngine] + encodeURIComponent(searchInput.value));
         searchInput.value = '';
     }
@@ -171,6 +183,22 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
             }
         }
     });
+
+    searchInput.addEventListener('focus', () => {
+        openHistoryPage();
+    });
+
+
+    document.addEventListener('click', (e) => {
+        const searchArea = document.getElementById('searchArea');
+        var target = e.target;
+        if (!(searchArea.contains(target) && target != searchArea)) {
+            if (document.getElementById('historyArea')) {
+                closeOverlay('historyArea');
+                hasHistoryArea = false;
+            }
+        }
+    })
 })();
 
 let hasSettingPage = false;
@@ -178,6 +206,7 @@ function openSettingPage() {
     if (hasSettingPage) {
         return;
     }
+    let historyEnabled = localStorage.getItem('historyEnabled');
     let base = document.createElement('div');
     let child = document.createElement('div');
     let heading = document.createElement('h1');
@@ -186,6 +215,8 @@ function openSettingPage() {
     let setBackground = document.createElement('div');
     let setBackgroundFromBing = document.createElement('div');
     let setBackgroundFromBingBar = document.createElement('div');
+    let enableHistory = document.createElement('div');
+    let enableHistoryBar = document.createElement('div');
     let resetBackground = document.createElement('div');
     let fileInput = document.createElement('input')
     const baseID = 'settingPage-' + randomString(8);
@@ -221,18 +252,32 @@ function openSettingPage() {
     backgroundBar.appendChild(resetBackground);
     backgroundBar.appendChild(setBackground);
 
-    setBackgroundFromBing.innerText = 'Get background from bing';
+    setBackgroundFromBing.innerText = 'get background from bing';
     setBackgroundFromBing.className = 'setBackground';
     setBackgroundFromBing.style.width = '100%';
     setBackgroundFromBing.setAttribute('onclick', 'setBingImage();');
 
     setBackgroundFromBingBar.appendChild(setBackgroundFromBing);
 
+    if (historyEnabled == 'true') {
+        enableHistory.innerText = 'disable history';
+    } else {
+        enableHistory.innerText = 'enable history';
+    }
+    enableHistory.className = 'enableHistory';
+    enableHistory.style.width = '100%';
+    enableHistory.setAttribute('onclick', 'enableHistory();');
+    enableHistory.id = 'enableHistory';
+
+    enableHistoryBar.className = 'backgroundBar';
+    enableHistoryBar.appendChild(enableHistory);
+
     child.className = 'childPart';
     child.prepend(heading);
     child.appendChild(document.createElement('hr'));
     child.appendChild(backgroundBar);
     child.appendChild(setBackgroundFromBingBar);
+    child.appendChild(enableHistoryBar);
 
     closeButtom.setAttribute("onclick", "closeOverlay(\"" + baseID + "\");hasSettingPage=false;");
     closeButtom.className = 'closeButtom';
@@ -446,4 +491,105 @@ let usingBing = localStorage.getItem('background.bing') != null;
 let lastBing = localStorage.getItem('background.lastBing');
 if (usingBing === true && getCurrentTime() != lastBing) {
     setBingImage();
+}
+
+let hasHistoryArea = false;
+function openHistoryPage() {
+    if (localStorage.getItem('historyEnabled') != 'true') {
+        return;
+    }
+    if (hasHistoryArea === true) {
+        return;
+    }
+    const searchArea = document.getElementById('searchArea');
+    let history = JSON.parse(localStorage.getItem('history'));
+    if (!history) {
+        return;
+    }
+
+    let base = document.createElement('div');
+    let child = document.createElement('div');
+    let heading = document.createElement('h2');
+    const baseID = 'historyArea';
+
+    heading.innerHTML = 'history';
+
+    let key = Object.keys(history);
+    for (let i = 0; i < key.length; i++) {
+        let historyTime = document.createElement('span');
+        let historyData = document.createElement('div');
+        let displayKey = key[i].split('.', 2);
+        if (displayKey[1].length == 20) {
+            displayKey[1] += '...';
+        }
+        historyData.innerHTML = displayKey[1];
+        historyData.dataset.historyData = history[key[i]];
+        historyData.id = 'history-' + history[key[i]] + '-' + randomString(8);
+        historyData.setAttribute("onclick", "fillInto(\"searchInput\",\"" + history[key[i]] + "\");");
+        historyTime.innerHTML = getRealTimeFromTimeStamp(displayKey[0]);
+        historyData.appendChild(historyTime);
+        child.appendChild(historyData);
+    }
+
+    if (key.length > 5) {
+        let timesToDelete = key.length - 5;
+        for (let i = 0; i < timesToDelete; i++) {
+            delete history[key[i]];
+            localStorage.setItem('history', JSON.stringify(history));
+        }
+    }
+
+    child.prepend(document.createElement('hr'));
+    child.prepend(heading);
+    base.appendChild(child);
+    base.id = baseID;
+    base.className = 'historyArea greyBackground';
+    searchArea.appendChild(base);
+    hasHistoryArea = true;
+}
+
+function getRealTimeFromTimeStamp(timestamp) {
+    if (!timestamp) {
+        return;
+    }
+    timestamp = Number(timestamp);
+    // 创建一个 Date 对象，传入时间戳
+    const date = new Date(timestamp);
+
+    // 获取年、月、日、时、分的值
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    // 拼接成"YYYY-MM-DD HH:MM"格式的字符串
+    const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    return formattedTime;
+}
+
+function getCurrentTimestamp() {
+    // 使用 Date 对象获取当前时间的毫秒数
+    return new Date().getTime();
+}
+
+function fillInto(elementID, value) {
+    const element = document.getElementById(elementID);
+    element.value = value;
+}
+
+if (!localStorage.getItem('historyEnabled')) {
+    localStorage.setItem('historyEnabled', 'true');
+}
+function enableHistory() {
+    let enabled = localStorage.getItem('historyEnabled');
+    const enableHistory = document.getElementById('enableHistory');
+    if (enabled == 'false') {
+        enableHistory.innerText = 'disable history';
+        localStorage.setItem('historyEnabled', 'true');
+    } else {
+        enableHistory.innerText = 'enable history';
+        localStorage.setItem('historyEnabled', 'false');
+    }
 }
