@@ -12,7 +12,9 @@ const searchEngine = {
     "ask": "https://www.ask.com/web?q=",
     "ecosia": "https://www.ecosia.org/search?method=index&q=",
     "naver": "https://search.naver.com/search.naver?query=",
-    "DDG": "https://duckduckgo.com/?t=h_&q="
+    "DDG": "https://duckduckgo.com/?t=h_&q=",
+    "searx": "https://searx.thegpm.org/?q=",
+    "startpage": "https://www.startpage.com/sp/search?query="
 };
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
@@ -68,6 +70,7 @@ if (lastTimeUsedEngine) {
 })();
 
 function search() {
+    const historyEnabled = localStorage.getItem('historyEnabled');
     selectedEngine = selectSearchEngine.value;
     localStorage.setItem('lastTimeUsedEngine', selectedEngine);
     let history = JSON.parse(localStorage.getItem('history'));
@@ -81,13 +84,18 @@ function search() {
         window.open(searchInput.value);
         searchInput.value = '';
     } else {
-        let newHistory = searchInput.value.substring(0, 20);
-        if (newHistory.length == 20) {
-            newHistory += '...';
+        if (historyEnabled == 'true') {
+            let newHistory = searchInput.value.substring(0, 15);
+            if (newHistory.length == 15) {
+                newHistory += '...';
+            }
+            newHistory = getCurrentTimestamp() + '.' + newHistory;
+            history[newHistory] = String(searchInput.value);
+            localStorage.setItem('history', JSON.stringify(history));
+            closeOverlay('historyArea');
+            hasHistoryArea = false;
+            openHistoryPage();
         }
-        newHistory = getCurrentTimestamp() + '.' + newHistory;
-        history[newHistory] = String(searchInput.value);
-        localStorage.setItem('history', JSON.stringify(history));
 
         window.open(searchEngine[selectedEngine] + encodeURIComponent(searchInput.value));
         searchInput.value = '';
@@ -515,11 +523,22 @@ function openHistoryPage() {
     heading.innerHTML = 'history';
 
     let key = Object.keys(history);
-    for (let i = 0; i < key.length; i++) {
+
+    if (key.length > 5) {
+        let timesToDelete = key.length - 5;
+        for (let i = 0; i < timesToDelete; i++) {
+            delete history[key[i]];
+            localStorage.setItem('history', JSON.stringify(history));
+        }
+        history = JSON.parse(localStorage.getItem('history'));
+        key = Object.keys(history);
+    }
+
+    for (let i = key.length - 1; i >= 0; i--) {//使历史记录倒着输出，看起来就是后搜索的靠前
         let historyTime = document.createElement('span');
         let historyData = document.createElement('div');
         let displayKey = key[i].split('.', 2);
-        if (displayKey[1].length == 20) {
+        if (displayKey[1].length == 15) {
             displayKey[1] += '...';
         }
         historyData.innerHTML = displayKey[1];
@@ -529,14 +548,6 @@ function openHistoryPage() {
         historyTime.innerHTML = getRealTimeFromTimeStamp(displayKey[0]);
         historyData.appendChild(historyTime);
         child.appendChild(historyData);
-    }
-
-    if (key.length > 5) {
-        let timesToDelete = key.length - 5;
-        for (let i = 0; i < timesToDelete; i++) {
-            delete history[key[i]];
-            localStorage.setItem('history', JSON.stringify(history));
-        }
     }
 
     child.prepend(document.createElement('hr'));
@@ -580,7 +591,7 @@ function fillInto(elementID, value) {
 }
 
 if (!localStorage.getItem('historyEnabled')) {
-    localStorage.setItem('historyEnabled', 'true');
+    localStorage.setItem('historyEnabled', 'false');
 }
 function enableHistory() {
     let enabled = localStorage.getItem('historyEnabled');
