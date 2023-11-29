@@ -591,5 +591,6 @@ function enableHistory() {
     } else {
         enableHistory.innerText = 'enable history';
         localStorage.setItem('historyEnabled', 'false');
+        localStorage.removeItem('history');
     }
 }
