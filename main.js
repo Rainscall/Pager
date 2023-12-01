@@ -92,8 +92,10 @@ function search() {
             newHistory = getCurrentTimestamp() + '.' + newHistory;
             history[newHistory] = String(searchInput.value);
             localStorage.setItem('history', JSON.stringify(history));
-            closeOverlay('historyArea');
-            hasHistoryArea = false;
+            if (document.getElementById('historyArea')) {
+                closeOverlay('historyArea');
+                hasHistoryArea = false;
+            }
             openHistoryPage();
         }
 
