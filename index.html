@@ -8,13 +8,14 @@
     <title>Pager</title>
     <link rel="preconnect" href="https://cdn.staticfile.org" />
     <link rel="stylesheet" href="https://cdn.staticfile.org/toastify-js/1.12.0/toastify.min.css">
+    <link rel="stylesheet" href="fonts/MiSans-Medium/result.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <noscript>You need to enable JavaScript to use this service.</noscript>
     <div class="basePart maxViewPort" id="basePart">
-        <div style="min-height: 50dvh;" id="searchArea">
+        <div style="min-height: 50vh;min-height: 50dvh;" id="searchArea">
             <div class="childPart" style="text-align: center;">
                 <h1 id="clock">Pager</h1>
             </div>
@@ -25,7 +26,7 @@
                 </div>
                 <form action="javascript:search();">
                     <input autocomplete="off" required placeholder="search something..." type="text" name="searchInput"
-                        id="searchInput">
+                        id="searchInput" spellcheck="false">
                 </form>
                 <div class="searchbuttom" onclick="search();">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"

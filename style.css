@@ -153,12 +153,14 @@ h1 {
     width: 100%;
     height: 1.1em;
     margin-top: 0.1em;
+    font-family: 'MiSans Medium';
+    color: #343434;
 }
 
-#searchInput ::placeholder {
-    font-size: larger;
+#searchInput::placeholder {
+    font-family: 'Josefin Sans';
+    transform: translateY(-0.1em);
 }
-
 
 .searchInput form {
     width: 90%;
@@ -355,7 +357,7 @@ body {
     padding-bottom: 2px;
     width: calc(100% - 2em);
     border-radius: 114514px;
-    color: #393939;
+    color: #484848;
     margin: 4px 0;
     background-color: #a7a7a76b;
     display: flex;
@@ -365,6 +367,8 @@ body {
     flex-direction: row;
     transition: all ease-in-out 0.210s;
     cursor: pointer;
+    font-family: 'MiSans Medium';
+    font-size: 90%;
 }
 
 .historyArea>div div:last-child {

@@ -14,7 +14,7 @@ const searchEngine = {
     "naver": "https://search.naver.com/search.naver?query=",
     "DDG": "https://duckduckgo.com/?t=h_&q=",
     "searx": "https://searx.thegpm.org/?q=",
-    "startpage": "https://www.startpage.com/sp/search?query="
+    "page": "https://www.startpage.com/sp/search?query="
 };
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
@@ -34,7 +34,7 @@ if (lastTimeUsedEngine) {
     const backgroundImage = localStorage.getItem('background.image');
     if (backgroundImage) {
         clock.style.color = "#FFF";
-        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
+        basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = 'url(\'' + backgroundImage + '\')';
     }
 })();
@@ -181,7 +181,18 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         if (event.ctrlKey) {
             if (event.key === 's' || event.key === 'S') {
                 event.preventDefault();
-                openSettingPage();
+                if (hasSettingPage === true) {
+                    closeOverlay(settingPageId);
+                    hasSettingPage = false;
+                } else {
+                    openSettingPage();
+                }
+            }
+        };
+        if (event.code === 'Escape') {
+            if (hasSettingPage === true) {
+                closeOverlay(settingPageId);
+                hasSettingPage = false;
             }
         };
         if (event.key === '/') {
@@ -209,6 +220,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
     })
 })();
 
+let settingPageId = '';
 let hasSettingPage = false;
 function openSettingPage() {
     if (hasSettingPage) {
@@ -301,6 +313,7 @@ function openSettingPage() {
     base.appendChild(child);
     document.body.prepend(base);
     hasSettingPage = true;
+    settingPageId = baseID;
 }
 
 function resetBackground() {
@@ -357,7 +370,7 @@ function changeBackground(fileInputId) {
         const backgroundImage = reader.result;
         document.body.style.backgroundImage = 'url(\'' + backgroundImage + '\')';
         clock.style.color = "#FFF";
-        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
+        basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         localStorage.setItem('background.image', backgroundImage);
     }
     fileInput.files = void 0;
@@ -454,7 +467,7 @@ async function setBingImage() {
 
         localStorage.setItem('background.image', base64data);
         localStorage.setItem('background.bing', true);
-        basePart.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
+        basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
     } catch (error) {
@@ -517,10 +530,7 @@ function openHistoryPage() {
 
     let base = document.createElement('div');
     let child = document.createElement('div');
-    let heading = document.createElement('h2');
     const baseID = 'historyArea';
-
-    heading.innerHTML = 'history';
 
     let key = Object.keys(history);
 
@@ -544,14 +554,12 @@ function openHistoryPage() {
         historyData.innerHTML = displayKey[1];
         historyData.dataset.historyData = history[key[i]];
         historyData.id = 'history-' + history[key[i]] + '-' + randomString(8);
-        historyData.setAttribute("onclick", "fillInto(\"searchInput\",\"" + history[key[i]] + "\");");
+        historyData.setAttribute("onclick", "fillInto(\"searchInput\",\"" + history[key[i]] + "\");focusToID(\'searchInput\');");
         historyTime.innerHTML = getRealTimeFromTimeStamp(displayKey[0]);
         historyData.appendChild(historyTime);
         child.appendChild(historyData);
     }
 
-    child.prepend(document.createElement('hr'));
-    child.prepend(heading);
     base.appendChild(child);
     base.id = baseID;
     base.className = 'historyArea greyBackground';
