@@ -206,6 +206,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
     });
 
     searchInput.addEventListener('focus', () => {
+        openTranslatePage();
         openHistoryPage();
     });
 
@@ -218,8 +219,20 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                 closeOverlay('historyArea');
                 hasHistoryArea = false;
             }
+            if (document.getElementById('translateArea')) {
+                closeOverlay('translateArea');
+                hasTranslateArea = false;
+            }
         }
-    })
+    });
+
+    searchInput.addEventListener('input', function () {
+        if (document.getElementById('translateArea')) {
+            closeOverlay('translateArea');
+            hasTranslateArea = false;
+        }
+        openTranslatePage();
+    });
 })();
 
 let settingPageId = '';
@@ -229,6 +242,7 @@ function openSettingPage() {
         return;
     }
     let historyEnabled = localStorage.getItem('historyEnabled');
+    let translateEnabled = localStorage.getItem('translateEnabled');
     let base = document.createElement('div');
     let child = document.createElement('div');
     let heading = document.createElement('h1');
@@ -239,6 +253,8 @@ function openSettingPage() {
     let setBackgroundFromBingBar = document.createElement('div');
     let enableHistory = document.createElement('div');
     let enableHistoryBar = document.createElement('div');
+    let enableTranslate = document.createElement('div');
+    let enableTranslateBar = document.createElement('div');
     let resetBackground = document.createElement('div');
     let fileInput = document.createElement('input')
     const baseID = 'settingPage-' + randomString(8);
@@ -286,7 +302,7 @@ function openSettingPage() {
     } else {
         enableHistory.innerText = 'enable history';
     }
-    enableHistory.className = 'enableHistory';
+    enableHistory.className = 'enableSwitch';
     enableHistory.style.width = '100%';
     enableHistory.setAttribute('onclick', 'enableHistory();');
     enableHistory.id = 'enableHistory';
@@ -294,12 +310,28 @@ function openSettingPage() {
     enableHistoryBar.className = 'backgroundBar';
     enableHistoryBar.appendChild(enableHistory);
 
+
+    if (translateEnabled == 'true') {
+        enableTranslate.innerText = 'disable translate';
+    } else {
+        enableTranslate.innerText = 'enable translate';
+    }
+    enableTranslate.className = 'enableSwitch';
+    enableTranslate.style.width = '100%';
+    enableTranslate.setAttribute('onclick', 'enableTranslate();');
+    enableTranslate.id = 'enableTranslate';
+
+    enableTranslateBar.className = 'backgroundBar';
+    enableTranslateBar.appendChild(enableTranslate);
+
     child.className = 'childPart';
     child.prepend(heading);
     child.appendChild(document.createElement('hr'));
     child.appendChild(backgroundBar);
     child.appendChild(setBackgroundFromBingBar);
+    child.appendChild(document.createElement('hr'));
     child.appendChild(enableHistoryBar);
+    child.appendChild(enableTranslateBar);
 
     closeButtom.setAttribute("onclick", "closeOverlay(\"" + baseID + "\");hasSettingPage=false;");
     closeButtom.className = 'closeButtom';
@@ -324,6 +356,7 @@ function resetBackground() {
     localStorage.removeItem('background.lastBing');
     clock.style.color = "#000";
     document.body.style.backgroundImage = '';
+    basePart.style.backgroundImage = '';
     Toastify({
         text: "Background reset",
         duration: 2000,
@@ -454,7 +487,7 @@ async function setBingImage() {
                 boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
             }
         }).showToast();
-        const bingResponse = await fetch('https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN');
+        const bingResponse = await fetch('https://bing.biturl.top/?resolution=3840&format=json&index=0&mkt=en-US');
         const bingData = await bingResponse.json();
         localStorage.setItem('background.lastBing', bingData.end_date);
 
@@ -512,7 +545,7 @@ function getCurrentTime() {
 //启用必应图片后自动更新
 let usingBing = localStorage.getItem('background.bing') != null;
 let lastBing = localStorage.getItem('background.lastBing');
-if (usingBing === true && getCurrentTime() != lastBing) {
+if (usingBing === true && (Number(getCurrentTime()) > Number(lastBing))) {
     setBingImage();
 }
 
@@ -569,6 +602,55 @@ function openHistoryPage() {
     hasHistoryArea = true;
 }
 
+let hasTranslateArea = false;
+function openTranslatePage() {
+    const searchInput = document.getElementById('searchInput');
+
+    if (!searchInput.value) {
+        return;
+    }
+    if (localStorage.getItem('translateEnabled') != 'true') {
+        return;
+    }
+    if (hasTranslateArea === true) {
+        return;
+    }
+
+    const searchInputArea = document.getElementById('searchInputArea');
+    let base = document.createElement('div');
+    let child = document.createElement('div');
+    let displayText = document.createElement('span');
+    const baseID = 'translateArea';
+
+    let infoText = document.createElement('span');
+    let translateData = document.createElement('div');
+    displayText.innerHTML = searchInput.value;
+    displayText.className = 'translateText';
+    translateData.setAttribute("onclick", `goToTranslate(\'${searchInput.value}\');`);
+    infoText.innerHTML = 'Translate';
+    translateData.appendChild(displayText);
+    translateData.appendChild(infoText);
+    child.appendChild(translateData);
+
+    base.appendChild(child);
+    base.id = baseID;
+    base.className = 'historyArea greyBackground';
+    insertAfter(base, searchInputArea);
+    hasTranslateArea = true;
+}
+
+function goToTranslate(text) {
+    const url = 'https://www.bing.com/translator?text=' + encodeURIComponent(text);
+    window.open(url);
+    searchInput.value = '';
+    closeOverlay('translateArea');
+    hasTranslateArea = false;
+}
+
+function insertAfter(newNode, curNode) {
+    curNode.parentNode.insertBefore(newNode, curNode.nextElementSibling);
+}
+
 function getRealTimeFromTimeStamp(timestamp) {
     if (!timestamp) {
         return;
@@ -613,5 +695,20 @@ function enableHistory() {
         enableHistory.innerText = 'enable history';
         localStorage.setItem('historyEnabled', 'false');
         localStorage.removeItem('history');
+    }
+}
+
+if (!localStorage.getItem('translateEnabled')) {
+    localStorage.setItem('translateEnabled', 'true');
+}
+function enableTranslate() {
+    let enabled = localStorage.getItem('translateEnabled');
+    const enableTranslate = document.getElementById('enableTranslate');
+    if (enabled == 'false') {
+        enableTranslate.innerText = 'disable translate';
+        localStorage.setItem('translateEnabled', 'true');
+    } else {
+        enableTranslate.innerText = 'enable translate';
+        localStorage.setItem('translateEnabled', 'false');
     }
 }
