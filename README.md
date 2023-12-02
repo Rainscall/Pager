@@ -15,6 +15,6 @@ Pager is a minimalist browser homepage.
  - Search history (off by default)
 
 ## Screenshot
-![When some features are enabled](https://i.miji.bid/2023/12/02/3ecd78751c66d5d58aeb89f68d63f4ce.png "When some features are enabled")
+![When some features are enabled](https://telegra.ph/file/4de51d825691dc399c336.jpg "When some features are enabled")
 
 ![Default](https://i.miji.bid/2023/12/02/81eacae0ec783de8e453246924cf8172.png "Default")
