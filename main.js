@@ -196,6 +196,17 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                 closeOverlay(settingPageId);
                 hasSettingPage = false;
             }
+            if (hasSettingPage === false) {
+                searchInput.blur();
+                if (document.getElementById('historyArea')) {
+                    closeOverlay('historyArea');
+                    hasHistoryArea = false;
+                }
+                if (document.getElementById('translateArea')) {
+                    closeOverlay('translateArea');
+                    hasTranslateArea = false;
+                }
+            }
         };
         if (event.key === '/') {
             if (searchInput != document.activeElement) {
@@ -444,6 +455,7 @@ function focusToID(elementId) {
     function clockCycle(action) {
         if (action == 'remove') {
             clearInterval(ClockInterval);
+            document.title = 'Pager';
             return;
         }
         ClockInterval = setInterval(writeToClock, 1000);
@@ -462,6 +474,7 @@ function focusToID(elementId) {
     function writeToClock() {
         const clock = document.getElementById('clock');
         clock.innerText = getRealTime();
+        document.title = getRealTime() + ' - Pager';
     }
 
     let clockEnabled = localStorage.getItem('clockEnabled');
