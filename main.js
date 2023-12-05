@@ -446,7 +446,6 @@ function focusToID(elementId) {
         } else {
             localStorage.setItem('clockEnabled', false);
             clockCycle('remove');
-            const clock = document.getElementById('clock');
             clock.innerText = 'Pager';
         }
     }

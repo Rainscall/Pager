@@ -289,6 +289,7 @@ body {
     cursor: pointer;
     user-select: none;
     color: #000;
+    text-shadow: 0 0 2px #4b4b4b4c;
 }
 
 .searchInputBase {
@@ -336,20 +337,22 @@ body {
 }
 
 .historyArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: 8px;
     border-radius: 20px;
     width: 100%;
     height: fit-content;
     transition: all ease-in-out 0.215s;
-    width: calc(100vw - 24px - 16px);
+    width: 90vw;
     max-width: 512px;
 }
 
 .historyArea>div {
     display: flex;
-    margin: 8px;
     height: 100%;
-    width: calc(100% - 8px - 8px);
+    width: calc(100% - 16px);
     flex-direction: column;
     align-items: center;
 }
