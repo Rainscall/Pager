@@ -1,3 +1,4 @@
+"use strict"
 const clock = document.getElementById('clock');
 const searchInput = document.getElementById('searchInput');
 const searchEngine = {
@@ -25,7 +26,7 @@ for (var i = 0; i < Object.keys(searchEngine).length; i++) {
     selectSearchEngine.appendChild(optionElement);
 }
 
-lastTimeUsedEngine = localStorage.getItem('lastTimeUsedEngine');
+let lastTimeUsedEngine = localStorage.getItem('lastTimeUsedEngine');
 if (lastTimeUsedEngine) {
     selectSearchEngine.value = lastTimeUsedEngine;
 }
@@ -181,22 +182,33 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 (() => {
     document.addEventListener('keydown', (event) => {
         if (event.ctrlKey) {
-            if (event.key === 's' || event.key === 'S') {
-                event.preventDefault();
-                if (hasSettingPage === true) {
-                    closeOverlay(settingPageId);
-                    hasSettingPage = false;
-                } else {
-                    openSettingPage();
-                }
+            switch (event.key) {
+                case 's': case 'S':
+                    event.preventDefault();
+                    if (hasMenuPage === true) {
+                        closeOverlay(menuPageId);
+                        hasMenuPage = false;
+                    } else {
+                        openMenuPage();
+                    }
+                    break;
+                case 'm': case 'M':
+                    if (hasNotePage === false) {
+                        event.preventDefault();
+                        openNotePage();
+                    } else {
+                        closeNotePage();
+                    }
+                    break;
             }
         };
+
         if (event.code === 'Escape') {
-            if (hasSettingPage === true) {
-                closeOverlay(settingPageId);
-                hasSettingPage = false;
+            if (hasMenuPage === true) {
+                closeOverlay(menuPageId);
+                hasMenuPage = false;
             }
-            if (hasSettingPage === false) {
+            if (hasMenuPage === false) {
                 searchInput.blur();
                 if (document.getElementById('historyArea')) {
                     closeOverlay('historyArea');
@@ -207,12 +219,18 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                     hasTranslateArea = false;
                 }
             }
-        };
-        if (event.key === '/') {
-            if (searchInput != document.activeElement) {
-                event.preventDefault();
-                focusToID('searchInput');
+            if (hasNotePage === true) {
+                closeNotePage();
             }
+        };
+
+        switch (event.key) {
+            case '/':
+                if (searchInput != document.activeElement && hasNotePage === false) {
+                    event.preventDefault();
+                    focusToID('searchInput');
+                }
+                break;
         }
     });
 
@@ -220,7 +238,6 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         openTranslatePage();
         openHistoryPage();
     });
-
 
     document.addEventListener('click', (e) => {
         const searchArea = document.getElementById('searchArea');
@@ -246,10 +263,10 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
     });
 })();
 
-let settingPageId = '';
-let hasSettingPage = false;
-function openSettingPage() {
-    if (hasSettingPage) {
+let menuPageId = '';
+let hasMenuPage = false;
+function openMenuPage() {
+    if (hasMenuPage) {
         return;
     }
     let historyEnabled = localStorage.getItem('historyEnabled');
@@ -266,8 +283,10 @@ function openSettingPage() {
     let enableHistoryBar = document.createElement('div');
     let enableTranslate = document.createElement('div');
     let enableTranslateBar = document.createElement('div');
+    let openNotePage = document.createElement('div');
+    let openNotePageBar = document.createElement('div');
     let resetBackground = document.createElement('div');
-    let fileInput = document.createElement('input')
+    let fileInput = document.createElement('input');
     const baseID = 'settingPage-' + randomString(8);
     const fileInputId = 'settingPage-fileInput-' + randomString(8);
 
@@ -279,7 +298,7 @@ function openSettingPage() {
     base.style.zIndex = '9000';
     base.style.backgroundColor = 'rgb(161 161 161 / 17%)';
     base.style.backdropFilter = 'blur(8px)';
-    heading.innerText = 'Settings';
+    heading.innerText = 'Menu';
 
     fileInput.type = 'file';
     fileInput.id = fileInputId;
@@ -335,6 +354,14 @@ function openSettingPage() {
     enableTranslateBar.className = 'backgroundBar';
     enableTranslateBar.appendChild(enableTranslate);
 
+    openNotePage.className = 'enableSwitch';
+    openNotePage.innerText = 'notebook';
+    openNotePage.style.width = '100%';
+    openNotePage.setAttribute('onclick', "openNotePage();closeOverlay(\"" + baseID + "\");hasMenuPage=false;");
+
+    openNotePageBar.className = 'backgroundBar';
+    openNotePageBar.appendChild(openNotePage);
+
     child.className = 'childPart';
     child.prepend(heading);
     child.appendChild(document.createElement('hr'));
@@ -343,8 +370,10 @@ function openSettingPage() {
     child.appendChild(document.createElement('hr'));
     child.appendChild(enableHistoryBar);
     child.appendChild(enableTranslateBar);
+    child.appendChild(document.createElement('hr'));
+    child.appendChild(openNotePageBar);
 
-    closeButtom.setAttribute("onclick", "closeOverlay(\"" + baseID + "\");hasSettingPage=false;");
+    closeButtom.setAttribute("onclick", "closeOverlay(\"" + baseID + "\");hasMenuPage=false;");
     closeButtom.className = 'closeButtom';
     closeButtom.innerText = 'close';
     closeButtom.style.backdropFilter = 'blur(30px);';
@@ -357,8 +386,8 @@ function openSettingPage() {
     child.appendChild(closeButtom);
     base.appendChild(child);
     document.body.prepend(base);
-    hasSettingPage = true;
-    settingPageId = baseID;
+    hasMenuPage = true;
+    menuPageId = baseID;
 }
 
 function resetBackground() {
@@ -461,9 +490,9 @@ function focusToID(elementId) {
     }
 
     function getRealTime() {
-        time = new Date();
-        hour = String(time.getHours());
-        minute = String(time.getMinutes())
+        let time = new Date();
+        let hour = String(time.getHours());
+        let minute = String(time.getMinutes())
         if (minute.length != 2) {
             minute = '0' + minute;
         }
@@ -657,6 +686,74 @@ function goToTranslate(text) {
     searchInput.value = '';
     closeOverlay('translateArea');
     hasTranslateArea = false;
+}
+
+let hasNotePage = false;
+function openNotePage() {
+    if (hasHistoryArea === true) {
+        return;
+    }
+    const searchArea = document.getElementById('searchArea');
+    const footer = document.querySelector('.footer');
+    footer.style.display = 'none';
+    searchArea.style.display = 'none';
+    let base = document.createElement('div');
+    let area = document.createElement('div');
+    let child = document.createElement('textarea');
+    let closeButtom = document.createElement('div');
+
+    base.id = 'noteBase';
+    base.style.width = '90vw';
+    base.style.maxWidth = 'calc(640px)'
+
+    closeButtom.setAttribute("onclick", "closeNotePage()");
+    closeButtom.className = 'closeButtom';
+    closeButtom.innerText = 'close';
+    closeButtom.style.backdropFilter = 'blur(30px);';
+    closeButtom.style.backgroundColor = '#ffffff8a';
+    closeButtom.style.paddingRight = '0';
+    closeButtom.style.paddingLeft = '0';
+    closeButtom.style.maxWidth = 'calc(640px - 16px)'
+
+    area.id = 'noteArea';
+
+    child.contentEditable = 'plaintext-only';
+    child.placeholder = 'Your text right here...';
+    child.id = 'noteInput';
+
+    area.appendChild(child);
+    base.appendChild(area);
+    insertAfter(base, searchArea);
+    insertAfter(closeButtom, area);
+    loadNoteFromLS();
+    document.getElementById('noteInput').addEventListener('input', () => {
+        saveNoteToLS();
+    });
+    hasNotePage = true;
+}
+
+function closeNotePage() {
+    const searchArea = document.getElementById('searchArea');
+    const footer = document.querySelector('.footer');
+    closeOverlay('noteBase');
+    footer.style.display = 'block';
+    searchArea.style.display = 'block';
+    hasNotePage = false;
+}
+
+function loadNoteFromLS() {
+    const noteInput = document.getElementById('noteInput');
+    const note = localStorage.getItem('note');
+    if (!note) {
+        noteInput.value = '';
+    } else {
+        noteInput.value = note;
+    }
+}
+
+function saveNoteToLS() {
+    const note = document.getElementById('noteInput').value;
+    localStorage.setItem('note', note);
 }
 
 function insertAfter(newNode, curNode) {

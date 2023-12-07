@@ -180,7 +180,7 @@ h1 {
     border: none;
     outline: none;
     background: none;
-    color: #6e6e6e;
+    color: #585858;
     text-transform: capitalize;
     height: 1.2em;
     appearance: none;
@@ -402,4 +402,45 @@ body {
     color: #484848;
     font-family: 'MiSans Medium';
     font-size: 90%;
+}
+
+#noteArea {
+    width:90vw;
+    max-width: calc(640px - 16px);
+    height: 85vh;
+    height: 85dvh;
+    overflow: hidden;
+    border-radius: 16px;
+    margin-bottom: 12px;
+}
+
+#noteArea>textarea {
+    outline: none;
+    border: none;
+    width: calc(100% - 32px);
+    height: calc(100% - 32px);
+    padding: 16px;
+    background-color: #ffffffdf;
+    border-radius: 16px;
+    box-shadow: 0 0 6px 1px #373737;
+    backdrop-filter: blur(8px);
+    overflow-y: scroll;
+    font-family: 'MiSans Medium';
+    font-size: medium;
+    resize: none;
+}
+
+#noteArea>textarea::-webkit-scrollbar {
+    width: 8px;
+    cursor: pointer;
+}
+
+#noteArea>textarea::-webkit-scrollbar-track {
+    display: none;
+}
+
+#noteArea>textarea::-webkit-scrollbar-thumb {
+    background: #9f9f9f;
+    border-radius: 10px;
+    cursor: pointer;
 }
