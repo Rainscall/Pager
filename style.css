@@ -309,14 +309,9 @@ body {
     transition: backdrop-filter ease-in 0.43s;
 }
 
-#basePart:has(.searchInputBase:hover) {
-    backdrop-filter: blur(4px);
-}
-
-#basePart:has(#searchInput:valid) {
-    backdrop-filter: blur(4px);
-}
-
+#basePart:has(#noteBase),
+#basePart:has(.searchInputBase:hover),
+#basePart:has(#searchInput:valid),
 #basePart:has(#searchInput:focus) {
     backdrop-filter: blur(4px);
 }
@@ -405,7 +400,7 @@ body {
 }
 
 #noteArea {
-    width:90vw;
+    width: 90vw;
     max-width: calc(640px - 16px);
     height: 85vh;
     height: 85dvh;

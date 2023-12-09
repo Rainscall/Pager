@@ -32,15 +32,6 @@ if (lastTimeUsedEngine) {
 }
 
 (() => {
-    const backgroundImage = localStorage.getItem('background.image');
-    if (backgroundImage) {
-        clock.style.color = "#FFF";
-        basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
-        document.body.style.backgroundImage = 'url(\'' + backgroundImage + '\')';
-    }
-})();
-
-(() => {
     if (!localStorage.getItem('lastTimeUsedEngine')) {
         fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14bc89dc7248a6c5')
             .then(response => {
@@ -299,6 +290,9 @@ function openMenuPage() {
     base.style.backgroundColor = 'rgb(161 161 161 / 17%)';
     base.style.backdropFilter = 'blur(8px)';
     heading.innerText = 'Menu';
+    if (hasBackground === true) {
+        heading.style.color = '#fff';
+    }
 
     fileInput.type = 'file';
     fileInput.id = fileInputId;
@@ -397,29 +391,27 @@ function resetBackground() {
     clock.style.color = "#000";
     document.body.style.backgroundImage = '';
     basePart.style.backgroundImage = '';
-    Toastify({
-        text: "Background reset",
-        duration: 2000,
-        className: "info",
-        position: "center",
-        gravity: "top",
-        style: {
-            background: "#414141",
-            borderRadius: "8px",
-            boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)",
-            textAlign: "center"
-        }
-    }).showToast();
+    hasBackground = false;
 }
 
 function fakeSelectFile(fileInputId) {
     document.getElementById(fileInputId).click();
 }
 
+let hasBackground = false;
+(() => {
+    const backgroundImage = localStorage.getItem('background.image');
+    if (backgroundImage) {
+        clock.style.color = "#FFF";
+        basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
+        document.body.style.backgroundImage = 'url(\'' + backgroundImage + '\')';
+        hasBackground = true;
+    }
+})();
 function changeBackground(fileInputId) {
     const reader = new FileReader();
     const fileInput = document.getElementById(fileInputId);
-    file = fileInput.files[0];
+    const file = fileInput.files[0];
     if (file.size > 1024 * 1024 * 2.5) {
         Toastify({
             text: "Image is too big.\nMax:2.5m",
@@ -437,9 +429,7 @@ function changeBackground(fileInputId) {
         fileInput.files = void 0;
         return;
     }
-    localStorage.removeItem('background.image');
-    localStorage.removeItem('background.bing');
-    localStorage.removeItem('background.lastBing');
+    resetBackground();
     reader.readAsDataURL(file);
     reader.onload = () => {
         const backgroundImage = reader.result;
@@ -449,6 +439,7 @@ function changeBackground(fileInputId) {
         localStorage.setItem('background.image', backgroundImage);
     }
     fileInput.files = void 0;
+    hasBackground = true;
 }
 
 function focusToID(elementId) {
@@ -546,6 +537,7 @@ async function setBingImage() {
         basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
+        hasBackground = true;
     } catch (error) {
         Toastify({
             text: 'Error fetching or processing data:\n' + error,
