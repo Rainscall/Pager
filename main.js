@@ -63,7 +63,7 @@ if (lastTimeUsedEngine) {
 
 function search() {
     const historyEnabled = localStorage.getItem('historyEnabled');
-    selectedEngine = selectSearchEngine.value;
+    const selectedEngine = selectSearchEngine.value;
     localStorage.setItem('lastTimeUsedEngine', selectedEngine);
     let history = JSON.parse(localStorage.getItem('history'));
     if (!history) {
