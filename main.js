@@ -1,4 +1,10 @@
 "use strict"
+const userLanguage = navigator.language;
+if (userLanguage === 'zh-CN' || userLanguage === 'zh-TW' || userLanguage === 'zh') {
+    console.log('%c请不要在此运行任何你不能理解的代码，否则将使你的信息陷入危险之中', 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
+} else {
+    console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
+}
 const clock = document.getElementById('clock');
 const searchInput = document.getElementById('searchInput');
 const searchEngine = {
@@ -209,6 +215,10 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                     closeOverlay('translateArea');
                     hasTranslateArea = false;
                 }
+                if (document.getElementById('suggestionArea')) {
+                    closeOverlay('suggestionArea');
+                    hasSuggestionPage = false;
+                }
             }
             if (hasNotePage === true) {
                 closeNotePage();
@@ -242,6 +252,10 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                 closeOverlay('translateArea');
                 hasTranslateArea = false;
             }
+            if (document.getElementById('suggestionArea')) {
+                closeOverlay('suggestionArea');
+                hasSuggestionPage = false;
+            }
         }
     });
 
@@ -251,6 +265,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
             hasTranslateArea = false;
         }
         openTranslatePage();
+        getSuggestions();
     });
 })();
 
@@ -678,6 +693,127 @@ function goToTranslate(text) {
     searchInput.value = '';
     closeOverlay('translateArea');
     hasTranslateArea = false;
+}
+
+function getSuggestions() {
+    const content = document.getElementById('searchInput').value;
+    if (!content) {
+        if (document.getElementById('suggestionArea') && hasSuggestionPage === true) {
+            closeOverlay('suggestionArea');
+        }
+        return;
+    }
+    const searchEngine = document.getElementById('selectSearchEngine').value;
+    const suggestAPIs = {
+        "google": "https://suggestqueries.google.com/complete/search?client=youtube&jsonp=window.google.sug&q=",
+        "bing": "https://api.bing.com/qsonhs.aspx?type=cb&cb=window.bing.sug&q=",
+        "baidu": "https://suggestion.baidu.com/su?p=3&cb=window.baidu.sug&wd="
+    };
+    let suggestAPI;
+    let processMethod;
+    switch (searchEngine) {
+        case 'google':
+        case 'bing':
+        case 'baidu':
+            processMethod = searchEngine;
+            suggestAPI = suggestAPIs[searchEngine];
+            break;
+        default:
+            processMethod = 'bing';
+            suggestAPI = suggestAPIs['bing'];
+    }
+    const url = suggestAPI + encodeURIComponent(content);
+    window.baidu = {
+        sug: function (json) {
+            const result = json.s;
+            if (result[0] == null) {
+                if (document.getElementById('suggestionArea') && hasSuggestionPage === true) {
+                    closeOverlay('suggestionArea');
+                }
+                return;
+            }
+            openSuggestionPage(result, processMethod);
+        }
+    };
+    
+    window.bing = {
+        sug: function (json) {
+            try {
+                const result = json.AS.Results[0].Suggests;
+                if (result == null) {
+                    if (document.getElementById('suggestionArea') && hasSuggestionPage === true) {
+                        closeOverlay('suggestionArea');
+                    }
+                    return;
+                }
+                openSuggestionPage(result, processMethod);
+            } catch (error) {
+                return;
+            }
+        }
+    };
+
+    window.google = {
+        sug: function (json) {
+            const result = json[1];
+            if (result[0] == null) {
+                if (document.getElementById('suggestionArea') && hasSuggestionPage === true) {
+                    closeOverlay('suggestionArea');
+                }
+                return;
+            }
+            openSuggestionPage(result, processMethod);
+        }
+    };
+
+    let script = document.createElement("script");
+    script.src = url;
+    script.id = 'temp-getSearchSuggestions';
+    document.getElementsByTagName("head")[0].appendChild(script);
+}
+
+let hasSuggestionPage = false;
+function openSuggestionPage(keywords, processMethod) {
+    if (!searchInput.value) {
+        return;
+    }
+    if (document.getElementById('suggestionArea') && hasSuggestionPage === true) {
+        closeOverlay('suggestionArea');
+    }
+
+    let base = document.createElement('div');
+    let child = document.createElement('div');
+    const baseID = 'suggestionArea';
+
+    for (let i = 0; i < 5; i++) {
+        let displayKey;
+        if (processMethod === 'bing') {
+            displayKey = keywords;
+        } else {
+            displayKey = keywords[i];
+        }
+        switch (processMethod) {
+            case 'google':
+                displayKey = String(displayKey).split(',')[0];
+                break;
+            case 'bing':
+                displayKey = displayKey[i].Txt;
+                break;
+        }
+
+        let historyData = document.createElement('div');
+
+        historyData.innerHTML = displayKey;
+        historyData.setAttribute("onclick", "fillInto(\"searchInput\",\"" + displayKey + "\");focusToID(\'searchInput\');");
+        child.appendChild(historyData);
+    }
+
+    base.appendChild(child);
+    base.id = baseID;
+    base.className = 'suggestionArea greyBackground';
+    searchArea.appendChild(base);
+    closeOverlay('temp-getSearchSuggestions');
+    hasSuggestionPage = true;
 }
 
 let hasNotePage = false;

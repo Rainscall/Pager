@@ -316,6 +316,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
+.suggestionArea>div hr,
 .historyArea>div hr,
 .warningWindow hr {
     outline: none;
@@ -327,10 +328,12 @@ body {
     width: 100%;
 }
 
+.suggestionArea>div hr,
 .historyArea>div hr {
     margin-top: 2px;
 }
 
+.suggestionArea,
 .historyArea {
     display: flex;
     justify-content: center;
@@ -344,6 +347,7 @@ body {
     max-width: 512px;
 }
 
+.suggestionArea>div,
 .historyArea>div {
     display: flex;
     height: 100%;
@@ -352,6 +356,7 @@ body {
     align-items: center;
 }
 
+.suggestionArea>div div,
 .historyArea>div div {
     padding: 4px 1em;
     padding-bottom: 2px;
@@ -371,18 +376,22 @@ body {
     font-size: 90%;
 }
 
+.suggestionArea>div div:last-child,
 .historyArea>div div:last-child {
     margin-bottom: 8px;
 }
 
+.suggestionArea>div div:first-child,
 .historyArea>div div:first-child {
     margin-top: 8px;
 }
 
+.suggestionArea>div div:hover,
 .historyArea>div div:hover {
     background-color: #a7a7a7a0;
 }
 
+.suggestionArea>div div span:last-child,
 .historyArea>div div span:last-child {
     font-size: smaller;
     font-weight: lighter;
