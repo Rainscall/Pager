@@ -735,7 +735,7 @@ function getSuggestions() {
             openSuggestionPage(result, processMethod);
         }
     };
-    
+
     window.bing = {
         sug: function (json) {
             try {
@@ -768,7 +768,7 @@ function getSuggestions() {
 
     let script = document.createElement("script");
     script.src = url;
-    script.id = 'temp-getSearchSuggestions';
+    script.className = 'temp-getSearchSuggestions';
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 
@@ -785,7 +785,8 @@ function openSuggestionPage(keywords, processMethod) {
     let child = document.createElement('div');
     const baseID = 'suggestionArea';
 
-    for (let i = 0; i < 5; i++) {
+
+    for (let i = 0; i < keywords.length && i < 5; i++) {
         let displayKey;
         if (processMethod === 'bing') {
             displayKey = keywords;
@@ -812,7 +813,10 @@ function openSuggestionPage(keywords, processMethod) {
     base.id = baseID;
     base.className = 'suggestionArea greyBackground';
     searchArea.appendChild(base);
-    closeOverlay('temp-getSearchSuggestions');
+    let tempElement = document.getElementsByClassName('temp-getSearchSuggestions');
+    for (let i = 0; i < tempElement.length; i++) {
+        tempElement[i].parentNode.removeChild(tempElement[i]);
+    }
     hasSuggestionPage = true;
 }
 
@@ -832,7 +836,7 @@ function openNotePage() {
 
     base.id = 'noteBase';
     base.style.width = '90vw';
-    base.style.maxWidth = 'calc(640px)'
+    base.style.maxWidth = 'calc(640px)';
 
     closeButtom.setAttribute("onclick", "closeNotePage()");
     closeButtom.className = 'closeButtom';
