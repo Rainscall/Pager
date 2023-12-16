@@ -160,6 +160,7 @@ h1 {
 #searchInput::placeholder {
     font-family: 'Josefin Sans';
     transform: translateY(-0.1em);
+    user-select: none;
 }
 
 .searchInput form {
@@ -447,4 +448,15 @@ body {
     background: #9f9f9f;
     border-radius: 10px;
     cursor: pointer;
+}
+
+noscript {
+    display: flex;
+    width: 100vw;
+    text-align: center;
+    height: 100vh;
+    height: 100svh;
+    height: 100dvh;
+    justify-content: center;
+    align-items: center;
 }

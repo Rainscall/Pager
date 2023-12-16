@@ -1,10 +1,4 @@
 "use strict"
-const userLanguage = navigator.language;
-if (userLanguage === 'zh-CN' || userLanguage === 'zh-TW' || userLanguage === 'zh') {
-    console.log('%c请不要在此运行任何你不能理解的代码，否则将使你的信息陷入危险之中', 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
-} else {
-    console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
-}
 const clock = document.getElementById('clock');
 const searchInput = document.getElementById('searchInput');
 const searchEngine = {
@@ -26,7 +20,7 @@ const searchEngine = {
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
 
-for (var i = 0; i < Object.keys(searchEngine).length; i++) {
+for (let i = 0; i < Object.keys(searchEngine).length; i++) {
     let optionElement = document.createElement('option');
     optionElement.innerText = Object.keys(searchEngine)[i];
     selectSearchEngine.appendChild(optionElement);
@@ -109,10 +103,10 @@ function closeOverlay(elementID) {
 
 function randomString(e) {
     e = e || 32;
-    var t = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678",
-        a = t.length,
-        n = "";
-    for (i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a));
+    let t = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";
+    let a = t.length;
+    let n = "";
+    for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a));
     return n
 }
 
@@ -168,7 +162,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 (() => {
     const searchInputArea = document.getElementById('searchInputArea');
     searchInputArea.addEventListener('click', (e) => {
-        var target = e.target;
+        let target = e.target;
         //判断点击的是父元素而不是下面的子元素
         if (!(searchInputArea.contains(target) && target != searchInputArea)) {
             focusToID('searchInput');
@@ -242,7 +236,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 
     document.addEventListener('click', (e) => {
         const searchArea = document.getElementById('searchArea');
-        var target = e.target;
+        let target = e.target;
         if (!(searchArea.contains(target) && target != searchArea)) {
             if (document.getElementById('historyArea')) {
                 closeOverlay('historyArea');
@@ -343,7 +337,7 @@ function openMenuPage() {
     }
     enableHistory.className = 'enableSwitch';
     enableHistory.style.width = '100%';
-    enableHistory.setAttribute('onclick', 'enableHistory();');
+    enableHistory.setAttribute('onclick', 'enableFeature(\'history\');');
     enableHistory.id = 'enableHistory';
 
     enableHistoryBar.className = 'backgroundBar';
@@ -357,7 +351,7 @@ function openMenuPage() {
     }
     enableTranslate.className = 'enableSwitch';
     enableTranslate.style.width = '100%';
-    enableTranslate.setAttribute('onclick', 'enableTranslate();');
+    enableTranslate.setAttribute('onclick', 'enableFeature(\'translate\');');
     enableTranslate.id = 'enableTranslate';
 
     enableTranslateBar.className = 'backgroundBar';
@@ -926,30 +920,58 @@ function fillInto(elementID, value) {
 if (!localStorage.getItem('historyEnabled')) {
     localStorage.setItem('historyEnabled', 'false');
 }
-function enableHistory() {
-    let enabled = localStorage.getItem('historyEnabled');
-    const enableHistory = document.getElementById('enableHistory');
-    if (enabled == 'false') {
-        enableHistory.innerText = 'disable history';
-        localStorage.setItem('historyEnabled', 'true');
-    } else {
-        enableHistory.innerText = 'enable history';
-        localStorage.setItem('historyEnabled', 'false');
-        localStorage.removeItem('history');
+
+if (!localStorage.getItem('translateEnabled')) {
+    localStorage.setItem('translateEnabled', 'false');
+}
+
+function enableFeature(feature) {
+    if (!feature) {
+        return;
+    }
+
+    function enableHistory() {
+        let enabled = localStorage.getItem('historyEnabled');
+        const enableHistory = document.getElementById('enableHistory');
+        if (enabled == 'false') {
+            enableHistory.innerText = 'disable history';
+            localStorage.setItem('historyEnabled', 'true');
+        } else {
+            enableHistory.innerText = 'enable history';
+            localStorage.setItem('historyEnabled', 'false');
+            localStorage.removeItem('history');
+        }
+    }
+
+    function enableTranslate() {
+        let enabled = localStorage.getItem('translateEnabled');
+        const enableTranslate = document.getElementById('enableTranslate');
+        if (enabled == 'false') {
+            enableTranslate.innerText = 'disable translate';
+            localStorage.setItem('translateEnabled', 'true');
+        } else {
+            enableTranslate.innerText = 'enable translate';
+            localStorage.setItem('translateEnabled', 'false');
+        }
+    }
+
+    switch (feature) {
+        case 'translate':
+            enableTranslate();
+            break;
+        case 'history':
+            enableHistory();
+            break;
+        default:
+            throw new Error('This feature is not available');
     }
 }
 
-if (!localStorage.getItem('translateEnabled')) {
-    localStorage.setItem('translateEnabled', 'true');
-}
-function enableTranslate() {
-    let enabled = localStorage.getItem('translateEnabled');
-    const enableTranslate = document.getElementById('enableTranslate');
-    if (enabled == 'false') {
-        enableTranslate.innerText = 'disable translate';
-        localStorage.setItem('translateEnabled', 'true');
-    } else {
-        enableTranslate.innerText = 'enable translate';
-        localStorage.setItem('translateEnabled', 'false');
-    }
+basePart.style.display = 'flex';
+
+const userLanguage = navigator.language;
+if (userLanguage === 'zh-CN' || userLanguage === 'zh-TW' || userLanguage === 'zh') {
+    console.log('%c请不要在此运行任何你不能理解的代码，否则将使你的信息陷入危险之中', 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
+} else {
+    console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
 }
