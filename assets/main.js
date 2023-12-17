@@ -970,8 +970,12 @@ function enableFeature(feature) {
 basePart.style.display = 'flex';
 
 const userLanguage = navigator.language;
-if (userLanguage === 'zh-CN' || userLanguage === 'zh-TW' || userLanguage === 'zh') {
-    console.log('%c请不要在此运行任何你不能理解的代码，否则将使你的信息陷入危险之中', 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
-} else {
-    console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
+switch (userLanguage) {
+    case 'zh-CN':
+    case 'zh-TW':
+    case 'zh':
+        console.log('%c请不要在此运行任何你不能理解的代码，否则将使你的信息陷入危险之中', 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
+        break;
+    default:
+        console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
 }
