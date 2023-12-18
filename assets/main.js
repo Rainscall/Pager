@@ -546,6 +546,22 @@ async function setBingImage() {
         basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
+        Toastify({
+            text: bingData.copyright.split("(",2)[0],
+            duration: 4300,
+            className: "info",
+            position: "center",
+            gravity: "top",
+            style: {
+                color: "#FFF",
+                background: "#414141",
+                borderRadius: "8px",
+                wordWrap: "break-word",
+                width: "fit-content",
+                maxWidth: "80vw",
+                boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+            }
+        }).showToast();
         hasBackground = true;
     } catch (error) {
         Toastify({
