@@ -31,35 +31,32 @@ if (lastTimeUsedEngine) {
     selectSearchEngine.value = lastTimeUsedEngine;
 }
 
-(() => {
-    if (!localStorage.getItem('lastTimeUsedEngine')) {
-        fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14bc89dc7248a6c5')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14bc89dc7248a6c5')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then(response => {
+        localStorage.setItem('userArea', response.country_code);
+        if (response.country_code == 'CN' && !localStorage.getItem('lastTimeUsedEngine')) {
+            selectSearchEngine.value = 'bing';
+            Toastify({
+                text: "In China, Bing is a better choice.",
+                duration: 2500,
+                className: "info",
+                position: "center",
+                gravity: "top",
+                style: {
+                    color: "#FFF",
+                    background: "#414141",
+                    borderRadius: "8px",
+                    boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
                 }
-                return response.json();
-            }).then(response => {
-                if (response.country_code == 'CN') {
-                    selectSearchEngine.value = 'bing';
-                    Toastify({
-                        text: "In China, Bing is a better choice.",
-                        duration: 2500,
-                        className: "info",
-                        position: "center",
-                        gravity: "top",
-                        style: {
-                            color: "#FFF",
-                            background: "#414141",
-                            borderRadius: "8px",
-                            boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
-                        }
-                    }).showToast();
-                    localStorage.setItem('lastTimeUsedEngine', 'bing');
-                }
-            })
-    }
-})();
+            }).showToast();
+            localStorage.setItem('lastTimeUsedEngine', 'bing');
+        }
+    })
 
 function search() {
     const historyEnabled = localStorage.getItem('historyEnabled');
@@ -253,7 +250,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         }
     });
 
-    searchInput.addEventListener('input', function () {
+    searchInput.addEventListener('input', () => {
         if (document.getElementById('translateArea')) {
             closeOverlay('translateArea');
             hasTranslateArea = false;
@@ -261,7 +258,113 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         openTranslatePage();
         getSuggestions();
     });
+
+    basePart.oncontextmenu = (e) => {
+        e.preventDefault();
+    }
+
+    basePart.addEventListener('mousedown', (e) => {
+        if (e.isTrusted == false) {
+            return;
+        }
+
+        if (e.button === 2 && e.target != clock && e.target != searchInput && !(footer.contains(e.target)) && hasNotePage === false) {
+            changeToIconMode();
+        }
+    })
+
+    basePart.addEventListener("touchstart", (event) => {
+        let timeoutID = setTimeout(() => {
+            if (event.target != clock && event.target != searchInput && !(footer.contains(event.target)) && hasNotePage === false) {
+                window.navigator.vibrate(200);
+                changeToIconMode();
+            }
+        }, 540);
+        basePart.addEventListener("touchend", () => {
+            clearTimeout(timeoutID);
+        });
+    });
+
 })();
+
+const footer = document.getElementsByClassName('footer')[0];
+const searchInputArea = document.getElementById('searchInputArea');
+let isIconMode = false;
+function changeToIconMode() {
+    if (isIconMode === false) {
+        let siteList = {
+            'Github': 'https://github.com',
+            'Gmail': 'https://mail.google.com',
+            'YouTube': 'https://www.youtube.com',
+            'Map': "https://www.bing.com/maps",
+            'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
+        }
+
+        if (localStorage.getItem('userArea') === 'CN') {
+            siteList = {
+                'Bilibili': 'https://www.bilibili.com',
+                'QQ Mail': 'https://mail.qq.com',
+                'QQ Music': 'https://y.qq.com',
+                'Map': 'https://map.baidu.com',
+                'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
+            }
+        }
+
+        searchInputArea.style.display = 'none';
+        footer.style.display = 'none';
+
+        let base = document.createElement('div');
+        let child = document.createElement('div');
+        base.id = 'iconArea';
+
+        for (let i = 0; i < Object.keys(siteList).length; i++) {
+            let item = document.createElement('div');
+            let title = document.createElement('div');
+            let ico = document.createElement('div');
+            let img = document.createElement('img');
+            let noIcon = false;
+
+            if (Object.keys(siteList)[i].startsWith('noIcon.')) {
+                noIcon = true;
+            }
+
+            let displayName = '';
+            if (noIcon === true) {
+                displayName = Object.keys(siteList)[i].split('.')[1];
+            } else {
+                displayName = Object.keys(siteList)[i];
+            }
+
+            item.className = 'iconAreaItem';
+            title.innerText = displayName;
+            item.setAttribute("onclick", `javascript:window.open('${Object.values(siteList)[i]}')`);
+            title.className = 'iconAreaTitle';
+
+            if (noIcon === false) {
+                img.src = `https://api--labs.cyberrain.dev/ico-picker?host=${Object.values(siteList)[i].split('/')[2]}`;
+                ico.appendChild(img);
+                ico.className = 'iconAreaIcon';
+                item.appendChild(ico);
+            }
+
+            item.appendChild(title);
+            child.appendChild(item);
+        }
+
+        base.className = 'iconArea';
+        base.style.background = 'none';
+        base.appendChild(child);
+        insertAfter(base, searchInputArea);
+
+        isIconMode = true;
+    } else {
+        closeOverlay('iconArea');
+        searchInputArea.style.display = 'flex';
+        footer.style.display = 'unset';
+
+        isIconMode = false;
+    }
+}
 
 let menuPageId = '';
 let hasMenuPage = false;
@@ -547,7 +650,7 @@ async function setBingImage() {
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
         Toastify({
-            text: bingData.copyright.split("(",2)[0],
+            text: bingData.copyright.split("(", 2)[0],
             duration: 4300,
             className: "info",
             position: "center",

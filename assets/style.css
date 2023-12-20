@@ -317,6 +317,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
+.iconArea>div hr,
 .suggestionArea>div hr,
 .historyArea>div hr,
 .warningWindow hr {
@@ -329,11 +330,13 @@ body {
     width: 100%;
 }
 
+.iconArea>div hr,
 .suggestionArea>div hr,
 .historyArea>div hr {
     margin-top: 2px;
 }
 
+.iconArea,
 .suggestionArea,
 .historyArea {
     display: flex;
@@ -348,6 +351,7 @@ body {
     max-width: 512px;
 }
 
+.iconArea>div,
 .suggestionArea>div,
 .historyArea>div {
     display: flex;
@@ -355,6 +359,21 @@ body {
     width: calc(100% - 16px);
     flex-direction: column;
     align-items: center;
+}
+
+.iconArea>div {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 80vh;
+    max-height: 80svh;
+    max-height: 80dvh;
+}
+
+.iconArea>div::-webkit-scrollbar {
+    display: none;
 }
 
 .suggestionArea>div div,
@@ -377,6 +396,55 @@ body {
     font-size: 90%;
 }
 
+.iconAreaItem {
+    padding: 4px 1em;
+    padding-bottom: 2px;
+    width: calc(100% - 2em);
+    color: #484848;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    transition: all ease-in-out 0.210s;
+    cursor: pointer;
+    font-family: 'MiSans Medium';
+    font-size: 90%;
+    width: fit-content;
+    max-width: 128px;
+    height: fit-content;
+    border-radius: 8px;
+    background: #ffffff91;
+    backdrop-filter: blur(8px);
+    margin: 8px;
+    user-select: none;
+    padding: 8px;
+}
+
+.iconAreaIcon{
+    height: 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.5em;
+    width: 1em;
+}
+
+.iconAreaIcon img{
+    height: 100%;
+    margin: 0;
+}
+
+.iconAreaTitle {
+    background: none;
+    backdrop-filter: none;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transform: translateY(1px);
+}
+
 .suggestionArea>div div:last-child,
 .historyArea>div div:last-child {
     margin-bottom: 8px;
@@ -392,6 +460,7 @@ body {
     background-color: #a7a7a7a0;
 }
 
+.iconArea>div div span:last-child,
 .suggestionArea>div div span:last-child,
 .historyArea>div div span:last-child {
     font-size: smaller;
