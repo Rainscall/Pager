@@ -276,7 +276,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
     basePart.addEventListener("touchstart", (event) => {
         let timeoutID = setTimeout(() => {
             if (event.target != clock && event.target != searchInput && !(footer.contains(event.target)) && hasNotePage === false) {
-                window.navigator.vibrate(200);
+                window.navigator.vibrate(12);
                 changeToIconMode();
             }
         }, 540);
