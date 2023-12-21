@@ -310,6 +310,7 @@ body {
     transition: backdrop-filter ease-in 0.43s;
 }
 
+#basePart:has(.iconArea),
 #basePart:has(#noteBase),
 #basePart:has(.searchInputBase:hover),
 #basePart:has(#searchInput:valid),
@@ -421,7 +422,11 @@ body {
     padding: 8px;
 }
 
-.iconAreaIcon{
+.iconAreaItem:hover{
+    transform: translateY(-2px);
+}
+
+.iconAreaIcon {
     height: 1em;
     display: flex;
     justify-content: center;
@@ -430,9 +435,11 @@ body {
     width: 1em;
 }
 
-.iconAreaIcon img{
+.iconAreaIcon img {
     height: 100%;
     margin: 0;
+    border-radius: 4px;
+    image-rendering: optimizeQuality;
 }
 
 .iconAreaTitle {

@@ -273,18 +273,25 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         }
     })
 
+    let startPointX;
+    let stopPointX;
+    let startTime;
+    let stopTime;
     basePart.addEventListener("touchstart", (event) => {
-        let timeoutID = setTimeout(() => {
-            if (event.target != clock && event.target != searchInput && !(footer.contains(event.target)) && hasNotePage === false) {
-                window.navigator.vibrate(12);
-                changeToIconMode();
-            }
-        }, 540);
-        basePart.addEventListener("touchend", () => {
-            clearTimeout(timeoutID);
-        });
+        startPointX = event.changedTouches[0].clientX;
+        startTime = event.timeStamp;
     });
 
+    basePart.addEventListener("touchend", (event) => {
+        if (event.target == clock || searchInputArea.contains(event.target)) {
+            return;
+        }
+        stopTime = event.timeStamp;
+        stopPointX = event.changedTouches[0].clientX;
+        if (Math.abs(startPointX - stopPointX) > 150 && stopTime - startTime < 850) {
+            changeToIconMode();
+        }
+    });
 })();
 
 const footer = document.getElementsByClassName('footer')[0];
@@ -292,22 +299,26 @@ const searchInputArea = document.getElementById('searchInputArea');
 let isIconMode = false;
 function changeToIconMode() {
     if (isIconMode === false) {
-        let siteList = {
-            'Github': 'https://github.com',
-            'Gmail': 'https://mail.google.com',
-            'YouTube': 'https://www.youtube.com',
-            'Map': "https://www.bing.com/maps",
-            'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
-        }
-
-        if (localStorage.getItem('userArea') === 'CN') {
+        let siteList = JSON.parse(localStorage.getItem('siteList'));
+        if (!siteList) {
             siteList = {
-                'Bilibili': 'https://www.bilibili.com',
-                'QQ Mail': 'https://mail.qq.com',
-                'QQ Music': 'https://y.qq.com',
-                'Map': 'https://map.baidu.com',
+                'Github': 'https://github.com',
+                'Gmail': 'https://mail.google.com',
+                'YouTube': 'https://www.youtube.com',
+                'Map': "https://www.bing.com/maps",
                 'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
             }
+
+            if (localStorage.getItem('userArea') === 'CN') {
+                siteList = {
+                    'Bilibili': 'https://www.bilibili.com',
+                    'QQ Mail': 'https://mail.qq.com',
+                    'QQ Music': 'https://y.qq.com',
+                    'Map': 'https://map.baidu.com',
+                    'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
+                }
+            }
+            localStorage.setItem('siteList', JSON.stringify(siteList));
         }
 
         searchInputArea.style.display = 'none';
