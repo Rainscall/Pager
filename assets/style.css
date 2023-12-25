@@ -65,6 +65,7 @@ h1 {
 }
 
 .basePart {
+    overflow: hidden;
     min-width: 100vw;
     display: flex;
     flex-direction: column;
@@ -545,6 +546,7 @@ noscript {
     width: 100%;
     z-index: 1000;
     position: fixed;
+    background-color: #00000029;
 }
 
 .modIconChild {
@@ -587,6 +589,7 @@ noscript {
 }
 
 .newSiteInfoArea input::placeholder {
+    font-size: smaller;
     color: #616161;
 }
 

@@ -268,6 +268,11 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
             return;
         }
 
+        const iconArea = document.getElementById('iconArea');
+        if (iconArea != null && iconArea.contains(e.target)) {
+            return;
+        }
+
         if (e.button === 2 && e.target != clock && e.target != searchInput && !(footer.contains(e.target)) && hasNotePage === false) {
             changeToIconMode();
         }
@@ -288,7 +293,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         }
         stopTime = event.timeStamp;
         stopPointX = event.changedTouches[0].clientX;
-        if (Math.abs(startPointX - stopPointX) > 150 && stopTime - startTime < 850) {
+        if (Math.abs(startPointX - stopPointX) > 100 && stopTime - startTime < 850) {
             changeToIconMode();
         }
     });
@@ -346,6 +351,7 @@ function changeToIconMode() {
                 displayName = Object.keys(siteList)[i];
             }
 
+            item.dataset.key = Object.keys(siteList)[i];
             item.className = 'iconAreaItem';
             title.innerText = displayName;
             item.setAttribute("onclick", `javascript:window.open('${Object.values(siteList)[i]}')`);
@@ -358,26 +364,51 @@ function changeToIconMode() {
                 item.appendChild(ico);
             }
 
+            item.addEventListener('mousedown', (e) => {
+                if (e.button === 2) {
+                    let siteList = JSON.parse(localStorage.getItem('siteList'));
+                    delete siteList[item.dataset.key];
+                    localStorage.setItem('siteList', JSON.stringify(siteList));
+                    changeToIconMode();
+                }
+            });
+
+            let longPressTimer;
+            item.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => {
+                    let siteList = JSON.parse(localStorage.getItem('siteList'));
+                    delete siteList[item.dataset.key];
+                    localStorage.setItem('siteList', JSON.stringify(siteList));
+                    changeToIconMode();
+                    changeToIconMode();
+                }, 650);
+            });
+
+            item.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+            });
+
             item.appendChild(title);
             child.appendChild(item);
-
-            if (i == Object.keys(siteList).length - 1) {
-                let item = document.createElement('div');
-                let title = document.createElement('div');
-
-                item.className = 'iconAreaItem';
-                title.innerText = '+';
-                title.className = 'iconAreaTitle';
-
-                item.style.borderRadius = '50%';
-                item.style.width = '1em';
-                item.style.justifyContent = 'center';
-                item.setAttribute('onclick', "modIcon()");
-
-                item.appendChild(title);
-                child.appendChild(item);
-            }
         }
+
+        //加入一个新增书签的按钮
+        let item = document.createElement('div');
+        let title = document.createElement('div');
+
+        item.className = 'iconAreaItem';
+        title.innerText = '+';
+        title.style.fontWeight = 'bold';
+        title.className = 'iconAreaTitle';
+
+        item.style.borderRadius = '50%';
+        item.style.width = '1em';
+        item.style.justifyContent = 'center';
+        item.setAttribute('onclick', "modIcon()");
+
+        item.appendChild(title);
+        child.appendChild(item);
+        //止
 
         base.className = 'iconArea';
         base.style.background = 'none';
@@ -1044,6 +1075,25 @@ function openSuggestionPage(keywords, processMethod) {
 let hasNotePage = false;
 function openNotePage() {
     if (hasHistoryArea === true) {
+        return;
+    }
+    if (navigator.userAgent.includes('Firefox')) {
+        Toastify({
+            text: 'Sorry, this feature is not available for FireFox. Please use Chrome or browsers that use Chromium.',
+            duration: 6450,
+            className: "info",
+            position: "center",
+            gravity: "top",
+            style: {
+                color: "#FFF",
+                background: "#414141",
+                borderRadius: "8px",
+                wordWrap: "break-word",
+                width: "fit-content",
+                maxWidth: "80vw",
+                boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+            }
+        }).showToast();
         return;
     }
     const searchArea = document.getElementById('searchArea');
