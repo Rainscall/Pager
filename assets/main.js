@@ -218,7 +218,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 
         switch (event.key) {
             case '/':
-                if (searchInput != document.activeElement && hasNotePage === false) {
+                if (searchInput != document.activeElement && hasNotePage === false && hasModPage === false) {
                     event.preventDefault();
                     focusToID('searchInput');
                 }
@@ -360,6 +360,23 @@ function changeToIconMode() {
 
             item.appendChild(title);
             child.appendChild(item);
+
+            if (i == Object.keys(siteList).length - 1) {
+                let item = document.createElement('div');
+                let title = document.createElement('div');
+
+                item.className = 'iconAreaItem';
+                title.innerText = '+';
+                title.className = 'iconAreaTitle';
+
+                item.style.borderRadius = '50%';
+                item.style.width = '1em';
+                item.style.justifyContent = 'center';
+                item.setAttribute('onclick', "modIcon()");
+
+                item.appendChild(title);
+                child.appendChild(item);
+            }
         }
 
         base.className = 'iconArea';
@@ -375,6 +392,86 @@ function changeToIconMode() {
 
         isIconMode = false;
     }
+}
+
+let hasModPage = false;
+function modIcon() {
+    if (isIconMode === false) {
+        changeToIconMode();
+    }
+    if (hasModPage === true) {
+        return;
+    }
+    let base = document.createElement('div');
+    let child = document.createElement('div');
+    let heading = document.createElement('h2');
+    let infoArea = document.createElement('div');
+    let siteNameForm = document.createElement('form');
+    let form = document.createElement('form');
+    let siteName = document.createElement('input');
+    let siteUrl = document.createElement('input');
+    let closeButtom = document.createElement('div');
+
+    heading.innerText = 'Add or edit site';
+    heading.style.display = 'block';
+    heading.style.color = '#fff';
+    heading.style.marginTop = '1.5rem';
+    heading.style.fontSize = '1.6rem';
+    heading.style.userSelect = 'none';
+    heading.style.textShadow = '0 0 2px #4b4b4b4c';
+
+    siteName.type = 'text';
+    siteName.required = 'true';
+    siteName.placeholder = 'Site name';
+    siteUrl.type = 'text';
+    siteUrl.required = 'true';
+    siteUrl.placeholder = 'URL with https://';
+
+    siteNameForm.appendChild(siteName);
+    siteNameForm.setAttribute('action', `javascript:void;`);
+
+    form.setAttribute('action', 'javascript:addNewSite();');
+    form.appendChild(siteUrl);
+
+    infoArea.className = 'newSiteInfoArea';
+    infoArea.appendChild(siteNameForm);
+    infoArea.appendChild(form);
+
+    closeButtom.setAttribute("onclick", "closeOverlay(\"modIconBase\");hasModPage=false;");
+    closeButtom.className = 'closeButtom';
+    closeButtom.innerText = 'close';
+    closeButtom.style.backdropFilter = 'blur(30px);';
+    closeButtom.style.backgroundColor = '#ffffffd0';
+    closeButtom.style.paddingRight = '0';
+    closeButtom.style.paddingLeft = '0';
+    closeButtom.style.marginBottom = '1.5rem';
+
+    child.appendChild(heading);
+    child.appendChild(document.createElement('hr'));
+    child.appendChild(infoArea);
+    child.appendChild(document.createElement('hr'));
+    child.appendChild(closeButtom);
+    child.className = 'modIconChild';
+
+    base.id = 'modIconBase';
+    base.className = 'modIconBase basePart';
+
+    base.appendChild(child);
+    document.body.prepend(base);
+    hasModPage = true;
+}
+
+function addNewSite() {
+    const name = document.getElementsByClassName('newSiteInfoArea')[0].childNodes[0].childNodes[0].value;
+    const url = document.getElementsByClassName('newSiteInfoArea')[0].childNodes[1].childNodes[0].value;
+
+    let siteList = JSON.parse(localStorage.getItem('siteList'));
+    siteList[name] = url;
+    localStorage.setItem('siteList', JSON.stringify(siteList));
+    closeOverlay("modIconBase");
+    hasModPage = false;
+    changeToIconMode();
+    changeToIconMode();
 }
 
 let menuPageId = '';
@@ -1109,3 +1206,5 @@ switch (userLanguage) {
     default:
         console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
 }
+
+changeToIconMode()

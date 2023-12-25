@@ -318,6 +318,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
+.modIconBase hr,
 .iconArea>div hr,
 .suggestionArea>div hr,
 .historyArea>div hr,
@@ -422,7 +423,7 @@ body {
     padding: 8px;
 }
 
-.iconAreaItem:hover{
+.iconAreaItem:hover {
     transform: translateY(-2px);
 }
 
@@ -535,4 +536,61 @@ noscript {
     height: 100dvh;
     justify-content: center;
     align-items: center;
+}
+
+.modIconBase {
+    min-height: 100vh;
+    min-height: 100lvh;
+    min-height: 100dvh;
+    width: 100%;
+    z-index: 1000;
+    position: fixed;
+}
+
+.modIconChild {
+    overflow: hidden;
+    padding: 0 24px;
+    width: calc(90vw - 48px);
+    max-width: 512px;
+    border-radius: 16px;
+    background-color: #ffffff6b;
+    height: fit-content;
+    box-shadow: 0 0 7px 0px #37373745;
+    backdrop-filter: blur(8px);
+}
+
+.newSiteInfoArea {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.newSiteInfoArea input[type="text"] {
+    width: calc(100% - 20px);
+    margin: 8px 0;
+    height: 2rem;
+    border-radius: 16px;
+    border: none;
+    outline: none;
+    padding: 0 10px;
+    font-family: 'MiSans Medium';
+    color: #343434;
+    text-align: center;
+    background-color: #ffffffd0;
+    transition: background-color 0.24s ease-in-out;
+}
+
+.newSiteInfoArea input[type="checkbox"] {
+    display: block;
+    width: 100%;
+}
+
+.newSiteInfoArea input::placeholder {
+    color: #616161;
+}
+
+.newSiteInfoArea input:focus,
+.newSiteInfoArea input:hover {
+    background-color: #f9f9f9;
 }
