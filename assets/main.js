@@ -1206,5 +1206,3 @@ switch (userLanguage) {
     default:
         console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
 }
-
-changeToIconMode()
