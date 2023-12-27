@@ -399,17 +399,17 @@ body {
     font-size: 90%;
 }
 
+
 .iconAreaItem {
     padding: 4px 1em;
     padding-bottom: 2px;
-    width: calc(100% - 2em);
     color: #484848;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: nowrap;
     flex-direction: row;
-    transition: all ease-in-out 0.210s;
+    transition: transform ease-in-out 0.210s;
     cursor: pointer;
     font-family: 'MiSans Medium';
     font-size: 90%;
@@ -422,6 +422,28 @@ body {
     margin: 8px;
     user-select: none;
     padding: 8px;
+}
+
+@media screen and (max-width: 580px) {
+    .iconAreaItem {
+        width: 70%;
+        height: 2em;
+        max-width: calc(100% - 16px);
+        padding: 8px 16px;
+        background: #ffffffbc;
+    }
+
+    .iconAreaItem:last-child {
+        height: 1em;
+        padding: 9px;
+    }
+
+    .iconArea>div {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
 }
 
 .iconAreaItem:hover {
