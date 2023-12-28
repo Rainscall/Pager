@@ -360,7 +360,7 @@ function openStartUpPage() {
     heading.style.userSelect = 'none';
     heading.style.textShadow = '0 0 2px #4b4b4b4c';
 
-    closeButtom.setAttribute("onclick", `closeOverlay("setUpButtomBase");hasStartUpPage=false;applySetUp();`);
+    closeButtom.setAttribute("onclick", `closeOverlay("setUpBase");hasStartUpPage=false;applySetUp();`);
     closeButtom.className = 'closeButtom';
     closeButtom.innerText = 'Confirm';
     closeButtom.style.backdropFilter = 'blur(30px);';
@@ -376,8 +376,8 @@ function openStartUpPage() {
     child.appendChild(closeButtom);
     child.className = 'modIconChild';
 
-    base.id = 'setUpButtomBase';
-    base.className = 'modIconBase basePart';
+    base.id = 'setUpBase';
+    base.className = 'basePart setUpBase';
 
     base.appendChild(child);
     document.body.prepend(base);
@@ -1352,3 +1352,5 @@ switch (userLanguage) {
 if (!(localStorage.getItem('lastTimeUsedEngine')) && localStorage.getItem('isNewUser') != 'false') {
     openStartUpPage();
 }
+
+openStartUpPage();

@@ -319,6 +319,7 @@ body {
     backdrop-filter: blur(4px);
 }
 
+.setUpBase hr,
 .modIconBase hr,
 .iconArea>div hr,
 .suggestionArea>div hr,
@@ -560,6 +561,7 @@ noscript {
     align-items: center;
 }
 
+.setUpBase,
 .modIconBase {
     min-height: 100vh;
     min-height: 100lvh;
@@ -653,14 +655,16 @@ noscript {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
-    width: calc(90% + 1em);
+    width: calc(100% - 32px);
+    padding: 0 16px;
+    font-size: small;
 }
 
 .setUpButtomBase>div>div div {
     transform: translateY(2px);
 }
 
-.setUpButtomBase>div>div div:last-child {
-    font-size: small;
-    transform: translateY(3px);
+.setUpBase {
+    background-color: #e3e3e38f;
+    backdrop-filter: blur(16px);
 }
