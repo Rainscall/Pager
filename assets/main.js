@@ -38,7 +38,7 @@ fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14
         }
         return response.json();
     }).then(response => {
-        localStorage.setItem('userArea', response.country_code);
+        sessionStorage.setItem('userArea', response.country_code);
         if (response.country_code == 'CN' && !localStorage.getItem('lastTimeUsedEngine')) {
             selectSearchEngine.value = 'bing';
             Toastify({
@@ -299,6 +299,101 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
     });
 })();
 
+let setUpInfo = {};
+let hasSetUpPage = false;
+function openStartUpPage() {
+    if (hasSetUpPage === true) {
+        return;
+    }
+    let base = document.createElement('div');
+    let child = document.createElement('div');
+    let heading = document.createElement('h2');
+    let infoArea = document.createElement('div');
+    let closeButtom = document.createElement('div');
+
+    setUpInfo = {
+        'realTimeClock': ['Real-time clock', 'enableClock', false],
+        'bingBackground': ['Background from Bing', 'setBingImage', false]
+    }
+
+    for (let i = 0; i < Object.keys(setUpInfo).length; i++) {
+        let base = document.createElement('div');
+        let child = document.createElement('div');
+        let item = document.createElement('div');
+        let title = document.createElement('div');
+        let status = document.createElement('div');
+
+        base.className = 'setUpButtomBase';
+
+        title.innerText = setUpInfo[Object.keys(setUpInfo)[i]][0];
+        status.innerText = 'Disabled';
+
+        item.dataset.enabled = 'false';
+        item.dataset.function = [Object.keys(setUpInfo)[i]];
+
+        base.addEventListener('click', () => {
+            if (item.dataset.enabled == 'true') {
+                item.dataset.enabled = 'false';
+                status.innerText = 'Disabled';
+                status.style.removeProperty("color");
+                setUpInfo[item.dataset.function][2] = false;
+            } else {
+                item.dataset.enabled = 'true';
+                status.innerText = 'Enabled';
+                status.style.color = '#147114';
+                setUpInfo[item.dataset.function][2] = true;
+            }
+        })
+
+        item.appendChild(title);
+        item.appendChild(status);
+        child.appendChild(item);
+        base.appendChild(child);
+        infoArea.appendChild(base);
+    }
+
+    heading.innerText = 'Set up your Pager';
+    heading.style.display = 'block';
+    heading.style.color = '#000';
+    heading.style.marginTop = '1.5rem';
+    heading.style.fontSize = '1.6rem';
+    heading.style.userSelect = 'none';
+    heading.style.textShadow = '0 0 2px #4b4b4b4c';
+
+    closeButtom.setAttribute("onclick", `closeOverlay("setUpButtomBase");hasStartUpPage=false;applySetUp();`);
+    closeButtom.className = 'closeButtom';
+    closeButtom.innerText = 'Confirm';
+    closeButtom.style.backdropFilter = 'blur(30px);';
+    closeButtom.style.backgroundColor = '#ffffff6b';
+    closeButtom.style.paddingRight = '0';
+    closeButtom.style.paddingLeft = '0';
+    closeButtom.style.marginBottom = '1.5rem';
+
+    child.appendChild(heading);
+    child.appendChild(document.createElement('hr'));
+    child.appendChild(infoArea);
+    child.appendChild(document.createElement('hr'));
+    child.appendChild(closeButtom);
+    child.className = 'modIconChild';
+
+    base.id = 'setUpButtomBase';
+    base.className = 'modIconBase basePart';
+
+    base.appendChild(child);
+    document.body.prepend(base);
+    hasSetUpPage = true;
+}
+
+function applySetUp() {
+    for (let i = 0; i < Object.keys(setUpInfo).length; i++) {
+        if (setUpInfo[Object.keys(setUpInfo)[i]][2] == false) {
+            continue;
+        }
+        eval(setUpInfo[Object.keys(setUpInfo)[i]][1] + '()');
+    }
+    localStorage.setItem('isNewUser', 'false');
+}
+
 const footer = document.getElementsByClassName('footer')[0];
 const searchInputArea = document.getElementById('searchInputArea');
 let isIconMode = false;
@@ -314,7 +409,7 @@ function changeToIconMode() {
                 'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
             }
 
-            if (localStorage.getItem('userArea') === 'CN') {
+            if (sessionStorage.getItem('userArea') === 'CN') {
                 siteList = {
                     'Bilibili': 'https://www.bilibili.com',
                     'QQ Mail': 'https://mail.qq.com',
@@ -702,58 +797,55 @@ function focusToID(elementId) {
     }
 }
 
-(() => {
-    const clock = document.getElementById('clock');
-    clock.addEventListener('click', () => {
-        enableClock()
-    });
+clock.addEventListener('click', () => {
+    enableClock()
+});
 
-    function enableClock() {
-        let clockEnabled = localStorage.getItem('clockEnabled');
-        if (!clockEnabled || clockEnabled == 'false') {
-            localStorage.setItem('clockEnabled', true);
-            writeToClock();
-            clockCycle('start');
-        } else {
-            localStorage.setItem('clockEnabled', false);
-            clockCycle('remove');
-            clock.innerText = 'Pager';
-        }
-    }
-
-    let ClockInterval;
-    function clockCycle(action) {
-        if (action == 'remove') {
-            clearInterval(ClockInterval);
-            document.title = 'Pager';
-            return;
-        }
-        ClockInterval = setInterval(writeToClock, 1000);
-    }
-
-    function getRealTime() {
-        let time = new Date();
-        let hour = String(time.getHours());
-        let minute = String(time.getMinutes())
-        if (minute.length != 2) {
-            minute = '0' + minute;
-        }
-        return (hour + ':' + minute);
-    }
-
-    function writeToClock() {
-        const clock = document.getElementById('clock');
-        clock.innerText = getRealTime();
-        document.title = getRealTime() + ' - Pager';
-    }
-
+function enableClock() {
     let clockEnabled = localStorage.getItem('clockEnabled');
-    if (clockEnabled == 'true') {
+    if (!clockEnabled || clockEnabled == 'false') {
         localStorage.setItem('clockEnabled', true);
         writeToClock();
         clockCycle('start');
+    } else {
+        localStorage.setItem('clockEnabled', false);
+        clockCycle('remove');
+        clock.innerText = 'Pager';
     }
-})();
+}
+
+let ClockInterval;
+function clockCycle(action) {
+    if (action == 'remove') {
+        clearInterval(ClockInterval);
+        document.title = 'Pager';
+        return;
+    }
+    ClockInterval = setInterval(writeToClock, 1000);
+}
+
+function getRealTime() {
+    let time = new Date();
+    let hour = String(time.getHours());
+    let minute = String(time.getMinutes())
+    if (minute.length != 2) {
+        minute = '0' + minute;
+    }
+    return (hour + ':' + minute);
+}
+
+function writeToClock() {
+    const clock = document.getElementById('clock');
+    clock.innerText = getRealTime();
+    document.title = getRealTime() + ' - Pager';
+}
+
+let clockEnabled = localStorage.getItem('clockEnabled');
+if (clockEnabled == 'true') {
+    localStorage.setItem('clockEnabled', true);
+    writeToClock();
+    clockCycle('start');
+}
 
 async function setBingImage() {
     try {
@@ -1255,4 +1347,8 @@ switch (userLanguage) {
         break;
     default:
         console.log("%c Please don't run any code here that you don't understand, or you'll put your information at risk", 'color: red; font-size: xx-large; font-family: Arial, Helvetica, sans-serif; background-color: yellow;');
+}
+
+if (!(localStorage.getItem('lastTimeUsedEngine')) && localStorage.getItem('isNewUser') != 'false') {
+    openStartUpPage();
 }

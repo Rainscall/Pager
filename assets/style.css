@@ -399,7 +399,6 @@ body {
     font-size: 90%;
 }
 
-
 .iconAreaItem {
     padding: 4px 1em;
     padding-bottom: 2px;
@@ -618,4 +617,50 @@ noscript {
 .newSiteInfoArea input:focus,
 .newSiteInfoArea input:hover {
     background-color: #f9f9f9;
+}
+
+.setUpButtomBase {
+    width: 100%;
+    background-color: #ffffff6b;
+    height: 2rem;
+    margin: 8px 0;
+    border-radius: 114514px;
+    box-shadow: 0 0 4px #00000006;
+    cursor: pointer;
+    user-select: none;
+}
+
+.setUpButtomBase:last-child {
+    margin: 0;
+}
+
+.setUpButtomBase:first-child {
+    margin: 0;
+    margin-bottom: 8px;
+}
+
+.setUpButtomBase>div {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.setUpButtomBase>div>div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: calc(90% + 1em);
+}
+
+.setUpButtomBase>div>div div {
+    transform: translateY(2px);
+}
+
+.setUpButtomBase>div>div div:last-child {
+    font-size: small;
+    transform: translateY(3px);
 }
