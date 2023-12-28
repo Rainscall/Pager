@@ -1352,5 +1352,3 @@ switch (userLanguage) {
 if (!(localStorage.getItem('lastTimeUsedEngine')) && localStorage.getItem('isNewUser') != 'false') {
     openStartUpPage();
 }
-
-openStartUpPage();
