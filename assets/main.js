@@ -208,17 +208,26 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                 sugPosition = Object.keys(keyword).length - 1;
             }
 
-            if (event.key === 'ArrowUp' && sugPosition > 0) {
-                sugPosition -= 1;
-            }
-
             if (event.key === 'ArrowUp' && sugPosition === -1) {
                 sugPosition = 0;
             }
-
-            if (event.key === 'ArrowDown' && sugPosition < Object.keys(keyword).length - 1) {
-                sugPosition += 1;
+            
+            if (event.key === 'ArrowUp') {
+                if (sugPosition > 0) {
+                    sugPosition -= 1;
+                } else {
+                    sugPosition = Object.keys(keyword).length - 1;
+                }
             }
+
+            if (event.key === 'ArrowDown') {
+                if (sugPosition < Object.keys(keyword).length - 1) {
+                    sugPosition += 1;
+                } else {
+                    sugPosition = 0;
+                }
+            }
+
             item[sugPosition].style.backgroundColor = "#84848440";
             fillInto('searchInput', keyword[sugPosition]);
             searchInput.selectionStart = searchInput.value.length;
