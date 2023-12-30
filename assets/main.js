@@ -168,6 +168,7 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 })();
 
 (() => {
+    let sugPosition = -1;
     document.addEventListener('keydown', (event) => {
         if (event.ctrlKey) {
             switch (event.key) {
@@ -190,6 +191,38 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                     break;
             }
         };
+
+        //使用上下方向键选择搜索建议的项
+        if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && hasSuggestionPage === true) {
+            event.preventDefault();
+            const suggestionArea = document.getElementById('suggestionArea');
+            let item = suggestionArea.childNodes[0].childNodes;
+            let keyword = {};
+
+            for (let i = 0; i < item.length; i++) {
+                item[i].style.removeProperty("background-color");
+                keyword[i] = item[i].dataset.keyword;
+            }
+
+            if (sugPosition > Object.keys(keyword).length - 1) {
+                sugPosition = Object.keys(keyword).length - 1;
+            }
+
+            if (event.key === 'ArrowUp' && sugPosition > 0) {
+                sugPosition -= 1;
+            }
+
+            if (event.key === 'ArrowUp' && sugPosition === -1) {
+                sugPosition = 0;
+            }
+
+            if (event.key === 'ArrowDown' && sugPosition < Object.keys(keyword).length - 1) {
+                sugPosition += 1;
+            }
+            item[sugPosition].style.backgroundColor = "#84848440";
+            fillInto('searchInput', keyword[sugPosition]);
+            searchInput.selectionStart = searchInput.value.length;
+        }
 
         if (event.code === 'Escape') {
             if (hasMenuPage === true) {
@@ -1149,6 +1182,7 @@ function openSuggestionPage(keywords, processMethod) {
         let historyData = document.createElement('div');
 
         historyData.innerHTML = displayKey;
+        historyData.dataset.keyword = displayKey;
         historyData.setAttribute("onclick", "fillInto(\"searchInput\",\"" + displayKey + "\");focusToID(\'searchInput\');");
         child.appendChild(historyData);
     }
