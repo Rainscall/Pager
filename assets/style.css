@@ -83,7 +83,7 @@ h1 {
 }
 
 .greyBackground {
-    background-color: rgba(227, 227, 227, 0.653);
+    background-color: rgb(236 236 236 / 84%);
 }
 
 .basePart>:not(:first-child) {
@@ -156,6 +156,7 @@ h1 {
     margin-top: 0.1em;
     font-family: 'MiSans Medium';
     color: #343434;
+    overflow: visible;
 }
 
 #searchInput::placeholder {
@@ -388,7 +389,7 @@ body {
     border-radius: 114514px;
     color: #484848;
     margin: 4px 0;
-    background-color: #a7a7a76b;
+    background-color: #a1a1a12b;
     display: flex;
     align-items: center;
     justify-content: space-between;

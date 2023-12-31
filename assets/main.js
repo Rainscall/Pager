@@ -208,24 +208,25 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
                 sugPosition = Object.keys(keyword).length - 1;
             }
 
-            if (event.key === 'ArrowUp' && sugPosition === -1) {
-                sugPosition = 0;
-            }
-            
-            if (event.key === 'ArrowUp') {
-                if (sugPosition > 0) {
-                    sugPosition -= 1;
-                } else {
-                    sugPosition = Object.keys(keyword).length - 1;
-                }
-            }
-
-            if (event.key === 'ArrowDown') {
-                if (sugPosition < Object.keys(keyword).length - 1) {
-                    sugPosition += 1;
-                } else {
-                    sugPosition = 0;
-                }
+            switch (event.key) {
+                case 'ArrowUp':
+                    if (sugPosition === -1) {
+                        sugPosition = 0;
+                        break;
+                    }
+                    if (sugPosition > 0) {
+                        sugPosition -= 1;
+                    } else {
+                        sugPosition = Object.keys(keyword).length - 1;
+                    }
+                    break;
+                case "ArrowDown":
+                    if (sugPosition < Object.keys(keyword).length - 1) {
+                        sugPosition += 1;
+                    } else {
+                        sugPosition = 0;
+                    }
+                    break;
             }
 
             item[sugPosition].style.backgroundColor = "#84848440";
