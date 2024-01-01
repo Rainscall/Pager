@@ -19,16 +19,51 @@ const searchEngine = {
 };
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
+const searchEngineDisplay = document.querySelector('#searchInputArea > div.searchEngine > span');
 
-for (let i = 0; i < Object.keys(searchEngine).length; i++) {
-    let optionElement = document.createElement('option');
-    optionElement.innerText = Object.keys(searchEngine)[i];
-    selectSearchEngine.appendChild(optionElement);
-}
-
+let currentSearchEngine = '';
 let lastTimeUsedEngine = localStorage.getItem('lastTimeUsedEngine');
 if (lastTimeUsedEngine) {
-    selectSearchEngine.value = lastTimeUsedEngine;
+    searchEngineDisplay.innerText = lastTimeUsedEngine;
+    currentSearchEngine = lastTimeUsedEngine;
+}
+
+searchEngineDisplay.addEventListener('click', (e) => {
+    openSearchEngineSelector();
+})
+
+function changeSearchEngine(engine) {
+    currentSearchEngine = engine;
+    searchEngineDisplay.innerText = engine;
+    openSearchEngineSelector();
+}
+
+let hasSearchEngineSelector = false;
+function openSearchEngineSelector() {
+    if (hasSearchEngineSelector === true) {
+        closeOverlay('searchEngineSelector');
+        hasSearchEngineSelector = false;
+        return;
+    }
+    const selectSearchEngineArea = document.getElementsByClassName('searchEngine')[0];
+    let base = document.createElement('div');
+    let item = document.createElement('div');
+    base.className = 'searchEngineSelector';
+    base.id = 'searchEngineSelector';
+
+    for (let i = 0; i < Object.keys(searchEngine).length; i++) {
+        let child = document.createElement('div');
+        child.innerText = Object.keys(searchEngine)[i];
+        child.dataset.engine = Object.keys(searchEngine)[i];
+        child.addEventListener('click', (e) => {
+            changeSearchEngine(Object.keys(searchEngine)[i]);
+        });
+        item.appendChild(child);
+    }
+
+    base.appendChild(item);
+    selectSearchEngineArea.appendChild(base);
+    hasSearchEngineSelector = true;
 }
 
 fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14bc89dc7248a6c5')
@@ -40,7 +75,7 @@ fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14
     }).then(response => {
         sessionStorage.setItem('userArea', response.country_code);
         if (response.country_code == 'CN' && !localStorage.getItem('lastTimeUsedEngine')) {
-            selectSearchEngine.value = 'bing';
+            currentSearchEngine = 'bing';
             Toastify({
                 text: "In China, Bing is a better choice.",
                 duration: 2500,
@@ -60,7 +95,7 @@ fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14
 
 function search() {
     const historyEnabled = localStorage.getItem('historyEnabled');
-    const selectedEngine = selectSearchEngine.value;
+    const selectedEngine = currentSearchEngine;
     localStorage.setItem('lastTimeUsedEngine', selectedEngine);
     let history = JSON.parse(localStorage.getItem('history'));
     if (!history) {
@@ -289,6 +324,10 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
             if (document.getElementById('suggestionArea')) {
                 closeOverlay('suggestionArea');
                 hasSuggestionPage = false;
+            }
+            if (document.getElementById('searchEngineSelector')) {
+                closeOverlay('searchEngineSelector');
+                hasSearchEngineSelector = false;
             }
         }
     });
@@ -1103,7 +1142,7 @@ function getSuggestions() {
         }
         return;
     }
-    const searchEngine = document.getElementById('selectSearchEngine').value;
+    const searchEngine = currentSearchEngine;
     const suggestAPIs = {
         "google": "https://suggestqueries.google.com/complete/search?client=youtube&jsonp=window.google.sug&q=",
         "bing": "https://api.bing.com/qsonhs.aspx?type=cb&cb=window.bing.sug&q=",
