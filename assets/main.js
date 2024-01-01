@@ -341,15 +341,20 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         stopPointX = event.changedTouches[0].clientX;
         stopPointY = event.changedTouches[0].clientY;
         if (Math.abs(startPointX - stopPointX) > Math.abs(startPointY - stopPointY)) {
+            if (hasNotePage === true || hasSetUpPage === true) {
+                return;
+            }
             if (Math.abs(startPointX - stopPointX) > 100 && stopTime - startTime < 850) {
                 changeToIconMode();
             }
         } else {
+            if (hasNotePage === true || hasSetUpPage === true) {
+                return;
+            }
             if (Math.abs(startPointY - stopPointY) > 100 && stopTime - startTime < 850) {
                 openMenuPage();
             }
         }
-
     });
 })();
 
