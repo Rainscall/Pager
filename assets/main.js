@@ -323,10 +323,13 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
 
     let startPointX;
     let stopPointX;
+    let startPointY;
+    let stopPointY;
     let startTime;
     let stopTime;
     basePart.addEventListener("touchstart", (event) => {
         startPointX = event.changedTouches[0].clientX;
+        startPointY = event.changedTouches[0].clientY;
         startTime = event.timeStamp;
     });
 
@@ -336,9 +339,17 @@ function createWarningWindow(headingText, infoText, closeButtomText, bgColor, fC
         }
         stopTime = event.timeStamp;
         stopPointX = event.changedTouches[0].clientX;
-        if (Math.abs(startPointX - stopPointX) > 100 && stopTime - startTime < 850) {
-            changeToIconMode();
+        stopPointY = event.changedTouches[0].clientY;
+        if (Math.abs(startPointX - stopPointX) > Math.abs(startPointY - stopPointY)) {
+            if (Math.abs(startPointX - stopPointX) > 100 && stopTime - startTime < 850) {
+                changeToIconMode();
+            }
+        } else {
+            if (Math.abs(startPointY - stopPointY) > 100 && stopTime - startTime < 850) {
+                openMenuPage();
+            }
         }
+
     });
 })();
 
