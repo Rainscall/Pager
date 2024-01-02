@@ -39,7 +39,9 @@ function changeSearchEngine(engine) {
     currentSearchEngine = engine;
     searchEngineDisplay.innerText = engine;
     localStorage.setItem('lastTimeUsedEngine', engine);
-    openSearchEngineSelector();
+    if (hasSearchEngineSelector === true) {
+        openSearchEngineSelector();
+    }
 }
 
 let hasSearchEngineSelector = false;
@@ -411,7 +413,7 @@ function openStartUpPage() {
     let closeButtom = document.createElement('div');
 
     setUpInfo = {
-        'realTimeClock': ['Real-time clock', 'enableClock', false],
+        'realTimeClock': ['Real-time clock', 'enableClock', true],
         'bingBackground': ['Background from Bing', 'setBingImage', false]
     }
 
@@ -429,6 +431,13 @@ function openStartUpPage() {
 
         item.dataset.enabled = 'false';
         item.dataset.function = [Object.keys(setUpInfo)[i]];
+
+        if (setUpInfo[Object.keys(setUpInfo)[i]][2] === true) {
+            item.dataset.enabled = 'true';
+            status.innerText = 'Enabled';
+            status.style.color = '#147114';
+            setUpInfo[item.dataset.function][2] = true;
+        }
 
         base.addEventListener('click', () => {
             if (item.dataset.enabled == 'true') {
