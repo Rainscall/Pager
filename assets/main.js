@@ -33,8 +33,12 @@ searchEngineDisplay.addEventListener('click', (e) => {
 })
 
 function changeSearchEngine(engine) {
+    if (!searchEngine[engine]) {
+        throw new Error('No such search engine');
+    }
     currentSearchEngine = engine;
     searchEngineDisplay.innerText = engine;
+    localStorage.setItem('lastTimeUsedEngine', engine);
     openSearchEngineSelector();
 }
 
@@ -75,7 +79,7 @@ fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14
     }).then(response => {
         sessionStorage.setItem('userArea', response.country_code);
         if (response.country_code == 'CN' && !localStorage.getItem('lastTimeUsedEngine')) {
-            currentSearchEngine = 'bing';
+            changeSearchEngine('bing');
             Toastify({
                 text: "In China, Bing is a better choice.",
                 duration: 2500,
