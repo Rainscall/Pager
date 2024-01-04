@@ -459,7 +459,7 @@ body {
     max-width: 128px;
     height: fit-content;
     border-radius: 8px;
-    background: #ffffff91;
+    background: #f1f1f1bc;
     backdrop-filter: blur(8px);
     margin: 8px;
     user-select: none;
@@ -472,7 +472,7 @@ body {
         height: 2em;
         max-width: calc(100% - 16px);
         padding: 8px 16px;
-        background: #ffffffbc;
+        background-color: #f1f1f1bc;
     }
 
     .iconAreaItem:last-child {

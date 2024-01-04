@@ -521,7 +521,7 @@ function changeToIconMode() {
                 siteList = {
                     'Bilibili': 'https://www.bilibili.com',
                     'QQ Mail': 'https://mail.qq.com',
-                    'QQ Music': 'https://y.qq.com',
+                    'NetEase Music': 'https://music.163.com',
                     'Map': 'https://map.baidu.com',
                     'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
                 }
