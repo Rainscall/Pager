@@ -500,6 +500,7 @@ function applySetUp() {
         eval(setUpInfo[Object.keys(setUpInfo)[i]][1] + '()');
     }
     localStorage.setItem('isNewUser', 'false');
+    hasSetUpPage = false;
 }
 
 const footer = document.getElementsByClassName('footer')[0];
