@@ -80,6 +80,7 @@ fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14
         return response.json();
     }).then(response => {
         sessionStorage.setItem('userArea', response.country_code);
+        sessionStorage.setItem('userLanguage', response.languages[0].code);
         if (response.country_code == 'CN' && !localStorage.getItem('lastTimeUsedEngine')) {
             changeSearchEngine('bing');
             Toastify({
@@ -971,13 +972,7 @@ async function setBingImage() {
                 boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
             }
         }).showToast();
-        let mkt = 'en-US', res = '3840';
-        if (sessionStorage.getItem('userArea') === 'CN') {
-            mkt = 'zh-CN';
-        }
-        if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-            res = '1920';
-        }
+        let mkt = `${sessionStorage.getItem('userLanguage')}-${sessionStorage.getItem('userArea')}`, res = '3840';
         const bingResponse = await fetch(`https://bing.biturl.top/?format=json&index=0&mkt=${mkt}&resolution=${res}`);
         const bingData = await bingResponse.json();
         localStorage.setItem('background.lastBing', bingData.end_date);
@@ -1476,8 +1471,7 @@ function enableFeature(feature) {
 
 basePart.style.display = 'flex';
 
-const userLanguage = navigator.language;
-switch (userLanguage) {
+switch (navigator.language) {
     case 'zh-CN':
     case 'zh-TW':
     case 'zh':
