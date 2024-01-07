@@ -15,7 +15,7 @@ const searchEngine = {
     "naver": "https://search.naver.com/search.naver?query=",
     "DDG": "https://duckduckgo.com/?t=h_&q=",
     "searx": "https://searx.thegpm.org/?q=",
-    "page": "https://www.startpage.com/sp/search?query="
+    "startPage": "https://www.startpage.com/sp/search?query="
 };
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
@@ -971,7 +971,14 @@ async function setBingImage() {
                 boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
             }
         }).showToast();
-        const bingResponse = await fetch('https://bing.biturl.top/?resolution=3840&format=json&index=0&mkt=en-US');
+        let mkt = 'en-US', res = '3840';
+        if (sessionStorage.getItem('userArea') === 'CN') {
+            mkt = 'zh-CN';
+        }
+        if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+            res = '1920';
+        }
+        const bingResponse = await fetch(`https://bing.biturl.top/?format=json&index=0&mkt=${mkt}&resolution=${res}`);
         const bingData = await bingResponse.json();
         localStorage.setItem('background.lastBing', bingData.end_date);
 
@@ -989,22 +996,43 @@ async function setBingImage() {
         basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
-        Toastify({
-            text: bingData.copyright.split("(", 2)[0],
-            duration: 4300,
-            className: "info",
-            position: "center",
-            gravity: "top",
-            style: {
-                color: "#FFF",
-                background: "#414141",
-                borderRadius: "8px",
-                wordWrap: "break-word",
-                width: "fit-content",
-                maxWidth: "80vw",
-                boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
-            }
-        }).showToast();
+        if (mkt === 'zh-CN') {
+            Toastify({
+                text: bingData.copyright.split("(", 2)[0],
+                duration: 4300,
+                className: "info",
+                position: "center",
+                gravity: "top",
+                style: {
+                    fontFamily: 'MiSans Medium',
+                    fontSize: '90%',
+                    color: "#FFF",
+                    background: "#414141",
+                    borderRadius: "8px",
+                    wordWrap: "break-word",
+                    width: "fit-content",
+                    maxWidth: "80vw",
+                    boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+                }
+            }).showToast();
+        } else {
+            Toastify({
+                text: bingData.copyright.split("(", 2)[0],
+                duration: 4300,
+                className: "info",
+                position: "center",
+                gravity: "top",
+                style: {
+                    color: "#FFF",
+                    background: "#414141",
+                    borderRadius: "8px",
+                    wordWrap: "break-word",
+                    width: "fit-content",
+                    maxWidth: "80vw",
+                    boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+                }
+            }).showToast();
+        }
         hasBackground = true;
     } catch (error) {
         Toastify({
