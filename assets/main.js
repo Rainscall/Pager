@@ -79,8 +79,8 @@ fetch('https://api.ipdata.co/?api-key=fb9dfde35d54ee96cbb2abfa8a573182071cf91c14
         }
         return response.json();
     }).then(response => {
-        sessionStorage.setItem('userArea', response.country_code);
-        sessionStorage.setItem('userLanguage', response.languages[0].code);
+        localStorage.setItem('userArea', response.country_code);
+        localStorage.setItem('userLanguage', response.languages[0].code);
         if (response.country_code == 'CN' && !localStorage.getItem('lastTimeUsedEngine')) {
             changeSearchEngine('bing');
             Toastify({
@@ -519,7 +519,7 @@ function changeToIconMode() {
                 'noIcon.Localnote': 'https://localnote--labs.cyberrain.dev'
             }
 
-            if (sessionStorage.getItem('userArea') === 'CN') {
+            if (localStorage.getItem('userArea') === 'CN') {
                 siteList = {
                     'Bilibili': 'https://www.bilibili.com',
                     'QQ Mail': 'https://mail.qq.com',
@@ -958,13 +958,23 @@ if (clockEnabled == 'true') {
 }
 
 async function setBingImage() {
+    function removeLoadingToast() {
+        let bingImageLoading = document.getElementsByClassName('temp-bingImageLoading');
+        if (bingImageLoading) {
+            for (let i = 0; i < bingImageLoading.length; i++) {
+                bingImageLoading[i].parentNode.removeChild(bingImageLoading[i]);
+            }
+        }
+    }
+
     try {
         Toastify({
             text: "Loading...",
-            duration: 2500,
+            duration: -1,
             className: "info",
             position: "center",
             gravity: "top",
+            className: "temp-bingImageLoading",
             style: {
                 color: "#FFF",
                 background: "#414141",
@@ -972,7 +982,13 @@ async function setBingImage() {
                 boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
             }
         }).showToast();
-        let mkt = `${sessionStorage.getItem('userLanguage')}-${sessionStorage.getItem('userArea')}`, res = '3840';
+        let mkt = `${(() => {
+            if (localStorage.getItem('userLanguage')) return localStorage.getItem('userLanguage');
+            return 'en';
+        })()}-${(() => {
+            if (localStorage.getItem('userArea')) return localStorage.getItem('userArea');
+            return 'US';
+        })()}`, res = '3840';
         const bingResponse = await fetch(`https://bing.biturl.top/?format=json&index=0&mkt=${mkt}&resolution=${res}`);
         const bingData = await bingResponse.json();
         localStorage.setItem('background.lastBing', bingData.end_date);
@@ -991,6 +1007,7 @@ async function setBingImage() {
         basePart.style.backgroundImage = 'radial-gradient(circle, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.34) 100%)';
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
+        removeLoadingToast();
         if (mkt === 'zh-CN') {
             Toastify({
                 text: bingData.copyright.split("(", 2)[0],
@@ -1030,16 +1047,22 @@ async function setBingImage() {
         }
         hasBackground = true;
     } catch (error) {
+        removeLoadingToast();
         Toastify({
-            text: 'Error fetching or processing data:\n' + error,
-            duration: 2500,
+            text: `Failed to fetch image:\n${error}\nClick to try again.`,
+            duration: 3500,
             className: "info",
             position: "center",
             gravity: "top",
+            onClick: setBingImage,
             style: {
                 color: "#FFF",
                 background: "#840D23",
                 borderRadius: "8px",
+                wordWrap: "break-word",
+                width: "fit-content",
+                maxWidth: "80vw",
+                userSelect: "none",
                 boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
             }
         }).showToast();
