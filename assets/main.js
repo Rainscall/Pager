@@ -500,6 +500,12 @@ function applySetUp() {
         }
         eval(setUpInfo[Object.keys(setUpInfo)[i]][1] + '()');
     }
+    if (!(lastTimeUsedEngine)) {
+        changeSearchEngine('google');
+    }
+    if (localStorage.getItem('userArea') === 'CN') {
+        changeSearchEngine('bing');
+    }
     localStorage.setItem('isNewUser', 'false');
     hasSetUpPage = false;
 }
@@ -982,13 +988,17 @@ async function setBingImage() {
                 boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
             }
         }).showToast();
+
+        let userLanguage = localStorage.getItem('userLanguage');
+        let userArea = localStorage.getItem('userArea');
         let mkt = `${(() => {
             if (localStorage.getItem('userLanguage')) return localStorage.getItem('userLanguage');
-            return 'en';
         })()}-${(() => {
             if (localStorage.getItem('userArea')) return localStorage.getItem('userArea');
-            return 'US';
         })()}`, res = '3840';
+        if ((!userLanguage) || (!userArea)) {
+            mkt = 'en-US';
+        }
         const bingResponse = await fetch(`https://bing.biturl.top/?format=json&index=0&mkt=${mkt}&resolution=${res}`);
         const bingData = await bingResponse.json();
         localStorage.setItem('background.lastBing', bingData.end_date);
