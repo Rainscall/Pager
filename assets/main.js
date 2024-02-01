@@ -15,7 +15,8 @@ const searchEngine = {
     "naver": "https://search.naver.com/search.naver?query=",
     "DDG": "https://duckduckgo.com/?t=h_&q=",
     "searx": "https://searx.thegpm.org/?q=",
-    "startPage": "https://www.startpage.com/sp/search?query="
+    "startPage": "https://www.startpage.com/sp/search?query=",
+    "qwant: "https://www.qwant.com/?q="
 };
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
