@@ -16,7 +16,7 @@ const searchEngine = {
     "DDG": "https://duckduckgo.com/?t=h_&q=",
     "searx": "https://searx.thegpm.org/?q=",
     "startPage": "https://www.startpage.com/sp/search?query=",
-    "qwant: "https://www.qwant.com/?q="
+    "qwant": "https://www.qwant.com/?q="
 };
 const basePart = document.getElementById('basePart');
 const selectSearchEngine = document.getElementById('selectSearchEngine');
