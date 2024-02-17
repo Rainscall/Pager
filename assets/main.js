@@ -964,7 +964,7 @@ if (clockEnabled == 'true') {
     clockCycle('start');
 }
 
-async function setBingImage() {
+async function setBingImage(imgSize = 3840) {
     function removeLoadingToast() {
         let bingImageLoading = document.getElementsByClassName('temp-bingImageLoading');
         if (bingImageLoading) {
@@ -996,7 +996,7 @@ async function setBingImage() {
             if (localStorage.getItem('userLanguage')) return localStorage.getItem('userLanguage');
         })()}-${(() => {
             if (localStorage.getItem('userArea')) return localStorage.getItem('userArea');
-        })()}`, res = '3840';
+        })()}`, res = imgSize;
         if ((!userLanguage) || (!userArea)) {
             mkt = 'en-US';
         }
@@ -1059,25 +1059,29 @@ async function setBingImage() {
         hasBackground = true;
     } catch (error) {
         removeLoadingToast();
-        Toastify({
-            text: `Failed to fetch image:\n${error}\nClick to try again.`,
-            duration: 3500,
-            className: "info",
-            position: "center",
-            gravity: "top",
-            onClick: setBingImage,
-            style: {
-                color: "#FFF",
-                background: "#840D23",
-                borderRadius: "8px",
-                wordWrap: "break-word",
-                width: "fit-content",
-                maxWidth: "80vw",
-                userSelect: "none",
-                boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
-            }
-        }).showToast();
-        console.error('Error fetching or processing data:', error);
+        if (String(error).startsWith('QuotaExceededError')) {
+            setBingImage(1920);
+        } else {
+            Toastify({
+                text: `Failed to fetch image:\n${error}\nClick to try again.`,
+                duration: 6500,
+                className: "info",
+                position: "center",
+                gravity: "top",
+                onClick: setBingImage,
+                style: {
+                    color: "#FFF",
+                    background: "#840D23",
+                    borderRadius: "8px",
+                    wordWrap: "break-word",
+                    width: "fit-content",
+                    maxWidth: "80vw",
+                    userSelect: "none",
+                    boxShadow: "0 3px 6px -1px rgba(0, 0, 0, 0.217), 0 10px 36px -4px rgba(98, 98, 98, 0.171)"
+                }
+            }).showToast();
+            console.error('Error fetching or processing data:', error);
+        }
     }
 }
 
