@@ -1002,7 +1002,6 @@ async function setBingImage(imgSize = 3840) {
         }
         const bingResponse = await fetch(`https://bing.biturl.top/?format=json&index=0&mkt=${mkt}&resolution=${res}`);
         const bingData = await bingResponse.json();
-        localStorage.setItem('background.lastBing', bingData.end_date);
 
         const imageResponse = await fetch(bingData.url);
         const blob = await imageResponse.blob();
@@ -1019,6 +1018,7 @@ async function setBingImage(imgSize = 3840) {
         document.body.style.backgroundImage = `url('${base64data}')`;
         clock.style.color = "#FFF";
         removeLoadingToast();
+        localStorage.setItem('background.lastBing', bingData.end_date);
         if (mkt === 'zh-CN') {
             Toastify({
                 text: bingData.copyright.split("(", 2)[0],
