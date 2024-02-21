@@ -570,7 +570,7 @@ function changeToIconMode() {
             title.className = 'iconAreaTitle';
 
             if (noIcon === false) {
-                img.src = `https://api--labs.cyberrain.dev/ico-picker?host=${Object.values(siteList)[i].split('/')[2]}&fallbackIcon=true`;
+                img.src = `https://api--labs.typeboom.com/ico-picker?host=${Object.values(siteList)[i].split('/')[2]}&fallbackIcon=true`;
                 ico.appendChild(img);
                 ico.className = 'iconAreaIcon';
                 item.appendChild(ico);
