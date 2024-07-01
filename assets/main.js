@@ -990,16 +990,14 @@ async function setBingImage(imgSize = 3840) {
             }
         }).showToast();
 
-        let userLanguage = localStorage.getItem('userLanguage');
-        let userArea = localStorage.getItem('userArea');
-        let mkt = `${(() => {
-            if (localStorage.getItem('userLanguage')) return localStorage.getItem('userLanguage');
-        })()}-${(() => {
-            if (localStorage.getItem('userArea')) return localStorage.getItem('userArea');
-        })()}`, res = imgSize;
-        if ((!userLanguage) || (!userArea)) {
-            mkt = 'en-US';
+        let userLanguage = localStorage.getItem('userLanguage') || 'en';
+        let userArea = localStorage.getItem('userArea') || 'US';
+
+        if (['HK', 'TW', 'MO'].includes(userArea)) {
+            userArea = 'CN';
         }
+        
+        let mkt = `${userLanguage}-${userArea}`, res = imgSize;
         const bingResponse = await fetch(`https://bing.biturl.top/?format=json&index=0&mkt=${mkt}&resolution=${res}`);
         const bingData = await bingResponse.json();
 
